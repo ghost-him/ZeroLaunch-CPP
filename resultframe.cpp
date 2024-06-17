@@ -38,16 +38,46 @@ ResultFrame::ResultFrame(QWidget *parent)
 
     auto x_bias = desktop_width / 2 - x / 2;
 
-
-    this->setGeometry(x_bias, desktop_height/ 4 + y + y / 10, x, y * 4);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    ui->frame->setStyleSheet("{background-color: white;"
-                             "border: 2px solid gray;"
-                             "border-radius: 10px;"
-                             "selection-background-color: lightblue;"
-                             "}");
-    ui->listWidget->setStyleSheet("");
+    this->setGeometry(x_bias, desktop_height/ 4 + y + y / 10, x, y * 4);
+
+    QPalette palette = QApplication::palette();
+    this->setStyleSheet(
+        QString(
+            "QFrame {"
+            "   border-radius: 10px;"         // 设置 QFrame 的圆角边框
+            "   background-color: transparent;" // 设置背景色为透明
+            "}"
+            "QListWidget {"
+            "   border-radius: 10px;"         // 设置 QListWidget 的圆角边框
+            "   background-color: white;" // 设置背景色为透明
+            "   border: 1px solid gray;"
+            "}"
+            "QListWidget::item:selected {"
+            "   background-color: %1;"        // 设置选中项的背景颜色
+            "   color: %2;"                   // 设置选中项的文字颜色
+            "   border-radius: 10px;"
+            "   font-weight: bold;"           // 设置选中项的文字加粗
+            "}"
+            "QListWidget::item:selected:!active {"
+            "   background-color: %3;"        // 设置非活动状态下选中项的背景颜色
+            "   color: %2;"                   // 设置非活动状态下选中项的文字颜色
+            "   border-radius: 10px;"
+            "   font-weight: bold;"           // 设置非活动状态下选中项的文字加粗
+            "}"
+            "QListWidget::item {"
+            "   padding-left: 4px;"          // 设置左侧填充，使标志更宽
+            "   padding-right: 4px;"         // 设置右侧填充，使标志更宽
+            "   border-radius: 10px;"
+            "   color: black;"               // 设置普通项的文字颜色
+            "   background-color: white;"    // 设置普通项的背景颜色
+            "}"
+            ).arg(
+                palette.color(QPalette::Highlight).name(),          // 获取系统主题的高亮颜色
+                palette.color(QPalette::HighlightedText).name(),    // 获取系统主题的高亮文字颜色
+                palette.color(QPalette::Inactive, QPalette::Highlight).name()  // 获取系统主题的非活动状态高亮颜色
+                ));
     updateInputText("");
 }
 

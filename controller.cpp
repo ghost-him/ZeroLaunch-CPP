@@ -78,6 +78,42 @@ void Controller::initConfigureFile()
     file.close();
 }
 
+bool Controller::startProcessWithElevation(const std::wstring &programPath, const std::wstring &workingDirectory)
+{
+    SHELLEXECUTEINFOW sei = { sizeof(sei) };
+    sei.lpVerb = L"runas"; // Request elevation
+    sei.lpFile = programPath.c_str();
+    sei.lpDirectory = workingDirectory.c_str();
+    sei.nShow = SW_SHOWNORMAL;
+
+    if (!ShellExecuteExW(&sei)) {
+        DWORD error = GetLastError();
+        if (error == ERROR_CANCELLED) {
+            qDebug() << "User declined the elevation request.";
+        } else {
+            qDebug() << "Failed to start process with elevation. Error: " << error;
+        }
+        return false;
+    }
+    return true;
+}
+
+bool Controller::startProcessNormally(const std::wstring &programPath, const std::wstring &workingDirectory)
+{
+    SHELLEXECUTEINFOW sei = { sizeof(sei) };
+    sei.lpVerb = nullptr; // Use default verb
+    sei.lpFile = programPath.c_str();
+    sei.lpDirectory = workingDirectory.c_str();
+    sei.nShow = SW_SHOWNORMAL;
+
+    if (!ShellExecuteExW(&sei)) {
+        DWORD error = GetLastError();
+        qDebug() << "Failed to start process normally. Error: " << error;
+        return false;
+    }
+    return true;
+}
+
 void Controller::init()
 {
     loadConfigure();
@@ -117,7 +153,27 @@ const std::vector<ProgramNode>& Controller::changedText(const QString &text)
 }
 
 void Controller::runProgramWithIndex(int index) {
+    Database& db = Database::getInstance();
+    auto& programsFile = db.getProgramsFile();
 
+    const std::wstring& programPath = programsFile[index].programPath;
+    db.addLaunchTime(index);
+    // Log the program path to ensure it is correct
+    qDebug() << "Attempting to run program: " << QString::fromStdWString(programPath);
+    // Extract the directory part of the path using std::filesystem
+    std::filesystem::path path(programPath);
+    std::wstring workingDirectory = path.parent_path().wstring();
+
+    // Try to start the process normally
+    if (!startProcessNormally(programPath, workingDirectory)) {
+        qDebug() << "Attempting to run process with elevation.";
+        if (!startProcessWithElevation(programPath, workingDirectory)) {
+            qDebug() << "Failed to start process even with elevation.";
+        }
+    }
+
+    /*
+    // 以下是使用cmd.exe启动的代码，该代码作为启动程序没有问题
     Database& db = Database::getInstance();
     auto& programsFile = db.getProgramsFile();
 
@@ -165,6 +221,8 @@ void Controller::runProgramWithIndex(int index) {
         CloseHandle(pi.hThread);
         qDebug() << "Process created successfully: " << commandLine;
     }
+    */
+
 }
 void Controller::setAutoStart(bool isAutoStart)
 {

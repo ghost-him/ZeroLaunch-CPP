@@ -36,6 +36,11 @@ private:
 
     void initConfigureFile();
 
+    bool startProcessWithElevation(const std::wstring& programPath, const std::wstring& workingDirectory);
+
+    bool startProcessNormally(const std::wstring& programPath, const std::wstring& workingDirectory);
+
+
     QJsonObject configure;
 };
 
