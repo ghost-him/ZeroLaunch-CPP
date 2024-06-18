@@ -10,7 +10,7 @@ SettingWindow::SettingWindow(QWidget *parent)
     , ui(new Ui::SettingWindow)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool); // 不显示任务栏图标
+    setWindowFlags(Qt::FramelessWindowHint); // 不显示任务栏图标
 }
 
 SettingWindow::~SettingWindow()
