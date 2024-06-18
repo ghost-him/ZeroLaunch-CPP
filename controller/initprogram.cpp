@@ -95,6 +95,7 @@ void InitProgram::clearStore()
 {
     Database& db = Database::getInstance();
     db.clearProgramInfo();
+    bannedPath.clear();
 }
 
 void InitProgram::initTargetDirectory(const std::wstring &path, unsigned int depth, int level_bias)

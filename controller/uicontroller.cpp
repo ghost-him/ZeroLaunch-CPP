@@ -12,6 +12,9 @@ UIController::UIController() {
 
     QObject::connect(&searchBar, &SearchBar::selectForwardItem, &resultFrame, &ResultFrame::selectForwardItem);
     QObject::connect(&searchBar, &SearchBar::selectBackwardItem, &resultFrame, &ResultFrame::selectBackwardItem);
+    QObject::connect(&searchBar, &SearchBar::hideProgram, [this](){
+        this->hide();
+    });
 
     // 初始化键盘钩子
     KeyboardHook& hook = KeyboardHook::getInstance();

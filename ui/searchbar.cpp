@@ -119,9 +119,7 @@ bool SearchBar::nativeEvent(const QByteArray &eventType, void *message, qintptr 
 void SearchBar::pressESC()
 {
     if (text().isEmpty()) {
-        // 隐藏
-        hide();
-        return;
+        emit hideProgram();
     } else {
         setText("");
         return;

@@ -34,6 +34,8 @@ signals:
 
     void launchSelectedProgram();
 
+    void hideProgram();
+
 private slots:
     void focusOnSearchBar();
 
