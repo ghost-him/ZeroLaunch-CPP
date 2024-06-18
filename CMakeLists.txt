@@ -26,31 +26,26 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QuickLaunch
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        keyboardhook.h keyboardhook.cpp
-        icon.qrc
-        searchbar.h searchbar.cpp
-
-        resultitem.h resultitem.cpp resultitem.ui
-        resultframe.h resultframe.cpp resultframe.ui
-        utils.cpp
-        initprogram.h initprogram.cpp
-        database.h database.cpp
-        controller.h controller.cpp
-        utils.h
-        singleapplication.h singleapplication.cpp
-        settingwindow.h settingwindow.cpp settingwindow.ui
-        Icon.rc
-
-
+        ./controller/keyboardhook.h ./controller/keyboardhook.cpp
+        ./ui/icon.qrc
+        ./ui/searchbar.h ./ui/searchbar.cpp
+        ./ui/resultitem.h ./ui/resultitem.cpp ./ui/resultitem.ui
+        ./ui/resultframe.h ./ui/resultframe.cpp ./ui/resultframe.ui
+        ./controller/utils.cpp ./controller/utils.h
+        ./controller/initprogram.h ./controller/initprogram.cpp
+        ./model/database.h ./model/database.cpp
+        ./controller/controller.h ./controller/controller.cpp
+        ./ui/singleapplication.h ./ui/singleapplication.cpp
+        ./ui/settingwindow.h ./ui/settingwindow.cpp ./ui/settingwindow.ui
+        ./ui/Icon.rc
+        controller/uicontroller.h controller/uicontroller.cpp
+        controller/windowhook.h controller/windowhook.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QuickLaunch APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

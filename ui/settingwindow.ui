@@ -221,6 +221,29 @@
       <string>自定义搜索栏的提示文本</string>
      </property>
     </widget>
+    <widget class="QLineEdit" name="LEEmptyText">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>280</y>
+       <width>421</width>
+       <height>25</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>280</y>
+       <width>181</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>自定义搜索无结果的文本</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QPushButton" name="btnConfirm">

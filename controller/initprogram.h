@@ -53,8 +53,6 @@ private:
     bool starts_with_directory(const fs::directory_entry& entry, const std::wstring& dir);
 
     std::vector<std::wstring> bannedPath;
-
-    void createFile(const QString &path, const QString &defaultContent);
 };
 
 #endif // INITPROGRAM_H

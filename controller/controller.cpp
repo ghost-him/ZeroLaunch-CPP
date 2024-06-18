@@ -3,8 +3,8 @@
 #include <QDebug>
 #include <QProcess>
 #include <QStandardPaths>
-#include "database.h"
-#include "searchbar.h"
+#include "../model/database.h"
+#include "../ui/searchbar.h"
 #include <QSettings>
 #include <QJsonObject>
 #include <QFile>
@@ -13,13 +13,32 @@
 #include <windows.h>
 #include <shlobj.h>
 #include <QApplication>
+#include "../controller/utils.h"
+#include "../ui/settingwindow.h"
 
-Controller::Controller() {}
+Controller::Controller() {
+    SearchBar& searchBar = SearchBar::getInstance();
+    ResultFrame& resultFrame = ResultFrame::getInstance();
+    SettingWindow& settingWindow = SettingWindow::getInstance();
+
+    QObject::connect(&settingWindow, &SettingWindow::confirmSetting, [this](SettingWindowConfigure configure){
+        this->saveSetting(configure);
+    });
+
+    QObject::connect(&searchBar, &QLineEdit::textChanged, [this](const QString& inputText){
+        this->inputText(inputText);
+    });
+
+    QObject::connect(&searchBar, &SearchBar::launchSelectedProgram, [this](){
+        this->launchSelectedProgram();
+    });
+
+}
 
 void Controller::loadConfigure()
 {
-    filePath = QApplication::applicationDirPath() + "/configure";
-    qDebug() <<filePath;
+    QString filePath = getConfigureFilePath();
+    qDebug() << filePath;
     // 检查文件是否存在
     QFile file(filePath);
     if (!file.exists()) {
@@ -56,16 +75,11 @@ void Controller::initConfigureFile()
 {
     QJsonObject jsonObject;
 
-    jsonObject["isAutoStart"] = false;
-    jsonObject["searchStartMenu"] = true;
-    jsonObject["searchRegistry"] = false;
-    jsonObject["searchProgramFile"] = false;
-    jsonObject["preLoadResource"] = false;
-    jsonObject["resultItemNumber"] = 4;
-    jsonObject["searchBarPlaceholderText"] = "Hello, QuickLaunch!";
+    jsonObject =  getDefaultSettingJson();
 
     QJsonDocument jsonDocument(jsonObject);
 
+    QString filePath = getConfigureFilePath();
     QFile file(filePath);
     // 打开文件以进行写入
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -120,7 +134,10 @@ void Controller::init()
     //根据加载的配置来初始化程序
 
     InitProgram& init = InitProgram::getInstance();
-    SearchBar::getInstance().initSettingWindow(configure);
+
+    SettingWindowConfigure classConfig = buildClassWithJson(configure);
+
+    uiController.initUI(classConfig);
 
     init.clearStore();
 
@@ -135,21 +152,19 @@ void Controller::init()
         init.initProgramWithProgramFileDir();
     }
     if (configure["preLoadResource"].toBool()) {
-        SearchBar::getInstance().initProgramIcon();
+        uiController.preLoadProgramIcon();
     }
 
-    SearchBar::getInstance().setResultItemNumber(configure["resultItemNumber"].toInt());
-    SearchBar::getInstance().setPlaceholderText(configure["searchBarPlaceholderText"].toString());
     setAutoStart(configure["isAutoStart"].toBool());
 
 }
 
-const std::vector<ProgramNode>& Controller::changedText(const QString &text)
+void Controller::launchSelectedProgram()
 {
-    qDebug() << "change text";
-    Database& db = Database::getInstance();
-    db.updateProgramInfo(text.toStdWString());
-    return db.getProgramsFile();
+    ResultFrame& resultFrame = ResultFrame::getInstance();
+    int index = resultFrame.getCurrentItemIndex();
+
+    runProgramWithIndex(index);
 }
 
 void Controller::runProgramWithIndex(int index) {
@@ -222,7 +237,16 @@ void Controller::runProgramWithIndex(int index) {
         qDebug() << "Process created successfully: " << commandLine;
     }
     */
+}
 
+void Controller::inputText(const QString &text)
+{
+    qDebug() << "change text";
+    if (!text.isEmpty()) {
+        Database& db = Database::getInstance();
+        db.updateProgramInfo(text.toStdWString());
+    }
+    uiController.updateResultFrame(text.isEmpty());
 }
 void Controller::setAutoStart(bool isAutoStart)
 {
@@ -244,9 +268,15 @@ const QJsonObject &Controller::getConfigure()
     return configure;
 }
 
-void Controller::saveConfigure(const QJsonObject& json)
+void Controller::saveSetting(SettingWindowConfigure configure)
 {
+    QJsonObject json;
+
+    json = buildJsonWithClass(configure);
+
     QJsonDocument jsonDocument(json);
+
+    QString filePath = getConfigureFilePath();
 
     QFile file(filePath);
     // 打开文件以进行写入
@@ -258,6 +288,9 @@ void Controller::saveConfigure(const QJsonObject& json)
     file.write(jsonDocument.toJson());
     // 关闭文件
     file.close();
+
+    // 保存好后，重新加载配置
+    init();
 }
 
 

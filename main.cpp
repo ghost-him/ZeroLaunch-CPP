@@ -1,12 +1,13 @@
-#include "searchbar.h"
+#include "ui/searchbar.h"
 
-#include "singleapplication.h"
+#include "ui/singleapplication.h"
 #include <QSystemTrayIcon>
 #include <QMenu>
-#include "keyboardhook.h"
-#include "controller.h"
+#include "controller/controller.h"
 #include <QTimer>
-#include "settingwindow.h"
+#include "ui/settingwindow.h"
+#include <QMessageBox>
+#include "controller/utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,20 +22,6 @@ int main(int argc, char *argv[])
     Controller& controller = Controller::getInstance();
     controller.init();
 
-    SearchBar& searchBar = SearchBar::getInstance();
-    searchBar.show();
-
-    KeyboardHook kh;
-    app.setProperty("KeyboardHook", QVariant::fromValue((void*)&kh));
-
-    QObject::connect(&kh, &KeyboardHook::keyPressed, [](int keyCode) {
-        qDebug() << "Key pressed:" << keyCode;
-    });
-
-    QObject::connect(&kh, &KeyboardHook::altSpacePressed, [&]() {
-        searchBar.show();
-    });
-
     // System Tray Icon Setup
     QSystemTrayIcon trayIcon;
     QMenu trayMenu;
@@ -45,14 +32,17 @@ int main(int argc, char *argv[])
 
     QAction openSettingAction("打开设置", &trayMenu);
     openSettingAction.setIcon(QIcon(":/icon/setting.svg"));
-    QObject::connect(&openSettingAction, &QAction::triggered, &searchBar.getSettingWindow(), &SettingWindow::show);
+    QObject::connect(&openSettingAction, &QAction::triggered, [](){
+        SettingWindow& settingWindow = SettingWindow::getInstance();
+        settingWindow.show();
+    });
 
     trayMenu.addAction(&exitAction);
     trayMenu.addAction(&openSettingAction);
 
     trayIcon.setContextMenu(&trayMenu);
     trayIcon.setIcon(QIcon(":/icon/trayIcon.svg"));
-    trayIcon.setToolTip("QuickLaunch beta 1");
+    trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
 
     // Database::getInstance().testCompareAlgorithm(L"steam1");

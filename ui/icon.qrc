@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>icon/trayIcon.svg</file>
-        <file>icon/tips.svg</file>
         <file>icon/exit.svg</file>
         <file>icon/setting.svg</file>
+        <file>icon/tips.svg</file>
+        <file>icon/trayIcon.svg</file>
     </qresource>
 </RCC>

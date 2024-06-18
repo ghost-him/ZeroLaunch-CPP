@@ -6,10 +6,10 @@
 #include <shlobj.h>
 #include <QStandardPaths>
 #include <iostream>
-#include "database.h"
+#include "../model/database.h"
 #include <QApplication>
 #include <QFile>
-
+#include "utils.h"
 
 InitProgram::InitProgram() {}
 
@@ -49,8 +49,8 @@ void InitProgram::initProgramWithProgramFileDir()
 
 void InitProgram::initCustomPath()
 {
-    QString customProgramDir = QApplication::applicationDirPath() + "/customProgramDir.txt";
-    QString bannedProgramDir = QApplication::applicationDirPath() + "/bannedProgramDir.txt";
+    QString customProgramDir = getCustomDirectoryPath();
+    QString bannedProgramDir = getBannedDirectoryPath();
 
     createFile(customProgramDir, "#在此文件下输入要索引的目录，程序会搜索所给目录与其一级子目录下的所有可执行程序，一行为一项\n#例：C:\\Users\\ghost\\Desktop");
     createFile(bannedProgramDir, "#在此文件下输入不希望索引的目录，程序不会搜索该目录下所有的文件与其子文件夹，\n#例：C:\\Users\\ghost\\Desktop\\clipboard");
@@ -236,21 +236,5 @@ bool InitProgram::starts_with_directory(const fs::directory_entry& entry, const 
     }
 
     return dir_it == dir_path.end();
-}
-
-void InitProgram::createFile(const QString &path, const QString &defaultContent)
-{
-    if (std::filesystem::exists(path.toStdWString()))
-        return ;
-
-    QFile file(path);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "无法打开文件进行写入";
-    }
-    QTextStream out(&file);
-    // 写入字符串到文件
-    out << defaultContent;
-
-    file.close();
 }
 

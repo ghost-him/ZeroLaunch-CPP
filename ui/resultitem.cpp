@@ -6,8 +6,6 @@ ResultItem::ResultItem(QWidget *parent)
     , ui(new Ui::ResultItem)
 {
     ui->setupUi(this);
-
-
 }
 
 ResultItem::~ResultItem()

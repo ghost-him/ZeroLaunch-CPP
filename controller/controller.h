@@ -1,9 +1,10 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 #include <QString>
-#include "database.h"
-
+#include "../model/database.h"
+#include "../ui/settingwindow.h"
 #include <QJsonObject>
+#include "uicontroller.h"
 class Controller
 {
 public:
@@ -18,20 +19,25 @@ public:
 
     void init();
 
-    const std::vector<ProgramNode>& changedText(const QString& text);
-
-    void runProgramWithIndex(int index);
+    void launchSelectedProgram();
 
     void setAutoStart(bool isAutoStart);
 
     const QJsonObject& getConfigure();
 
-    void saveConfigure(const QJsonObject& json);
+    void runProgramWithIndex(int index);
+
+    void inputText(const QString& text);
+
+
 
 private:
-    QString filePath;
+
+
+    UIController uiController;
 
     Controller();
+
     void loadConfigure();
 
     void initConfigureFile();
@@ -40,6 +46,7 @@ private:
 
     bool startProcessNormally(const std::wstring& programPath, const std::wstring& workingDirectory);
 
+    void saveSetting(SettingWindowConfigure configure);
 
     QJsonObject configure;
 };
