@@ -164,6 +164,7 @@ void Controller::launchSelectedProgram()
     ResultFrame& resultFrame = ResultFrame::getInstance();
     int index = resultFrame.getCurrentItemIndex();
 
+    uiController.hide();
     runProgramWithIndex(index);
 }
 
