@@ -1,5 +1,7 @@
 # QuickLaunch
 
+[国内项目地址](https://gitee.com/ghost-him/QuickLaunch)，[国外项目地址](https://github.com/ghost-him/QuickLaunch)
+
 ## 介绍
 
 `QuickLaunch` 是一个使用 `qt` 开发的运行在 `windows` 环境下的用于快速启动应用程序的软件。
