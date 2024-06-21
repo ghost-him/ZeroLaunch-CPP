@@ -15,6 +15,7 @@
 #include <QApplication>
 #include "../controller/utils.h"
 #include "../ui/settingwindow.h"
+#include "../model/chineseconvertpinyin.h"
 
 Controller::Controller() {
     SearchBar& searchBar = SearchBar::getInstance();
@@ -138,6 +139,11 @@ void Controller::init()
     SettingWindowConfigure classConfig = buildClassWithJson(configure);
 
     uiController.initUI(classConfig);
+
+    ChineseConvertPinyin& pinyin = ChineseConvertPinyin::getInstance();
+    pinyin.init();
+
+    qDebug() << "test: ---" << pinyin.getPinyin(L"你好");
 
     init.clearStore();
 

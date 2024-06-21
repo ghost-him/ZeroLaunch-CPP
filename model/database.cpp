@@ -1,9 +1,22 @@
 #include "database.h"
 #include <algorithm>
-#include <cwctype>
-#include <qDebug>
+#include "chineseconvertpinyin.h"
 #include <cmath>
+#include <cwctype>
+#include <QDebug>
 Database::Database() {}
+// 防止使用windows自己的min宏定义
+#undef min
+#undef max
+
+double Database::computeCombinedValue(const std::wstring &storeName, const std::wstring &inputName)
+{
+    double editValue = editSubstrDistance(storeName, inputName);
+    double kmpValue = kmp(storeName, inputName);
+    double lcsValue = LCS(storeName, inputName);
+
+    return editValue + kmpValue + lcsValue * 0.2;
+}
 
 void Database::insertProgramInfo(const std::wstring &programName, const std::wstring &programPath, int stableLevel)
 {
@@ -16,26 +29,34 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     if (isExist(compareName))
         return ;
 
-    programs.emplace_back(showName, compareName, programPath, 0, stableLevel);
+    // 将中文转为拼音
+    ChineseConvertPinyin& converter = ChineseConvertPinyin::getInstance();
+    std::wstring pinyin = converter.getPinyin(compareName);
+    std::wstring firstLatterName = simplifiedPinyin(pinyin);
+
+    programs.emplace_back(showName, compareName, pinyin, firstLatterName, programPath, 0, stableLevel, 0);
 }
 
 void Database::updateProgramInfo(const std::wstring &inputValue)
 {
     for (auto & i : programs) {
         const std::wstring& compareName = i.compareName;
+        const std::wstring& pinyinName = i.pinyinName;
+        const std::wstring& firstLatterName = i.firstLatterName;
         // 如果输入的长度已经大于其本身的长度了，则一定不是该软件
-        if (inputValue.size() > compareName.size()) {
+        if (inputValue.size() > std::max(compareName.size(), pinyinName.size())) {
             i.programLevel = 50000;
             continue;
         }
         std::wstring compareKey = inputValue;
         tolower(compareKey);
 
-        double editValue = editSubstrDistance(compareName, compareKey);
-        double kmpValue = kmp(compareName, compareKey);
-        double lcsValue = LCS(compareName, compareKey);
+        double directValue = computeCombinedValue(compareName, compareKey);
+        double pinyinValue = computeCombinedValue(pinyinName, compareKey);
+        double firstLatterValue = computeCombinedValue(firstLatterName, compareKey);
 
-        i.programLevel = editValue + kmpValue + lcsValue * 0.2 + i.stableLevel;
+        i.programLevel = std::min({directValue, pinyinValue, firstLatterValue}) + i.stableLevel;
+
     }
 
     std::sort(programs.begin(), programs.end());
@@ -213,6 +234,23 @@ std::wstring Database::preprocess(const std::wstring &inputText)
             s --;
         } else if (s == 0){
             ret.push_back(i);
+        }
+    }
+    return ret;
+}
+
+std::wstring Database::simplifiedPinyin(const std::wstring& input)
+{
+    std::wstring ret;
+    bool inWord = false;
+    for (const auto& i : input) {
+        if (i != L' ') {
+            if (!inWord)
+                ret.push_back(i);
+            inWord = true;
+            continue;
+        } else {
+            inWord = false;
         }
     }
     return ret;

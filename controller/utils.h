@@ -33,6 +33,8 @@ QString getCustomDirectoryPath();
 
 QString getBannedDirectoryPath();
 
+QString getPinyinConfigPath();
+
 void createFile(const QString &path, const QString &defaultContent);
 
 QJsonObject buildJsonWithClass(const SettingWindowConfigure& config);

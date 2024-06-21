@@ -7,15 +7,15 @@
 
 struct ProgramNode {
     std::wstring programName;
+
     std::wstring compareName;
+    std::wstring pinyinName;
+    std::wstring firstLatterName;
+
     std::wstring programPath;
     double programLevel;
     int stableLevel;
     int launchTime;
-
-    ProgramNode();
-    ProgramNode(const std::wstring& IprogramName, const std::wstring& IcompareName, const std::wstring& IprogramPath, int IprogramLevel, int IstableLevel):
-        programName(IprogramName), compareName(IcompareName), programPath(IprogramPath), programLevel(IprogramLevel), stableLevel(IstableLevel) {}
 
     const bool operator<(const ProgramNode& other) const {
         if (programLevel != other.programLevel) {
@@ -62,6 +62,8 @@ private:
     std::vector<ProgramNode> programs;
     std::unordered_set<std::wstring> cache;
 
+    double computeCombinedValue(const std::wstring& storeName, const std::wstring& inputName);
+
     double LCS(const std::wstring& compareName, const std::wstring& inputValue);
     double LCS_MAX(const std::wstring& compareName, const std::wstring& inputValue);
     double editSubstrDistance(const std::wstring& compareName, const std::wstring& inputValue);
@@ -70,6 +72,8 @@ private:
 
     std::wstring& tolower(std::wstring& other);
     std::wstring preprocess(const std::wstring& inputText);
+
+    std::wstring simplifiedPinyin(const std::wstring& input);
 
 };
 

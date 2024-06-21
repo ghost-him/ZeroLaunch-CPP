@@ -46,6 +46,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ./ui/Icon.rc
         controller/uicontroller.h controller/uicontroller.cpp
         controller/windowhook.h controller/windowhook.cpp
+        model/chineseconvertpinyin.h model/chineseconvertpinyin.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QuickLaunch APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -66,6 +67,20 @@ else()
 endif()
 
 target_link_libraries(QuickLaunch PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+message(${CMAKE_SOURCE_DIR}/model/pinyin.json)
+message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+add_custom_command(
+    OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/pinyin.json
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/model/pinyin.json ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    DEPENDS ${CMAKE_SOURCE_DIR}/model/pinyin.json
+    COMMENT "Copying pinyin.json to output directory"
+)
+
+add_custom_target(copy_pinyin_file ALL
+    DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/pinyin.json
+)
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
