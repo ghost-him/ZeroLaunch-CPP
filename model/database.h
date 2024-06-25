@@ -25,9 +25,7 @@ struct ProgramNode {
         } else {
             return compareName < other.compareName;
         }
-
     }
-
 };
 
 class Database

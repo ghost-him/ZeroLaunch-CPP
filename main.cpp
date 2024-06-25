@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
 
-    // Database::getInstance().testCompareAlgorithm(L"steam1");
+    //Database::getInstance().testCompareAlgorithm(L"stem");
 
     return app.exec();
 }

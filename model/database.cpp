@@ -159,7 +159,6 @@ double Database::editSubstrDistance(const std::wstring& compareName, const std::
     }
 
     min_operations /= inputValue.size();
-
     return pow(3, 3 * min_operations - 2) * 25;
 }
 
@@ -270,7 +269,7 @@ void Database::testCompareAlgorithm(std::wstring inputValue)
     for (auto & i : programs) {
         const std::wstring& compareName = i.compareName;
         // 如果输入的长度已经大于其本身的长度了，则一定不是该软件
-        if (inputValue.size() > compareName.size() - 3) {
+        if (inputValue.size() > compareName.size()) {
             i.programLevel = 50000;
             continue;
         }
