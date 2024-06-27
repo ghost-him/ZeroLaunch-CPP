@@ -110,6 +110,10 @@ C:\users\ghost\desktop\root folder
 
 对于功能的添加，由于当前主要是为我个人使用，因此如果是我暂时用不到的功能，可能不会优先添加。只有当我也有了相应的需求时，才会考虑加入。不过，非常欢迎各位大佬来完善和改进这个软件。
 
+## 安全性
+
+[![Security Status](https://www.murphysec.com/platform3/v31/badge/1806375627855749120.svg)](https://www.murphysec.com/console/report/1806375613305708544/1806375627855749120)
+
 ## 使用的开源项目
 
 * [qt6](https://www.qt.io/product/qt6)：程序的UI界面与文件读写，json解析等部分使用qt6编写。
