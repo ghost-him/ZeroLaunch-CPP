@@ -39,7 +39,6 @@ Controller::Controller() {
 void Controller::loadConfigure()
 {
     QString filePath = getConfigureFilePath();
-    qDebug() << filePath;
     // 检查文件是否存在
     QFile file(filePath);
     if (!file.exists()) {
@@ -142,8 +141,6 @@ void Controller::init()
 
     ChineseConvertPinyin& pinyin = ChineseConvertPinyin::getInstance();
     pinyin.init();
-
-    qDebug() << "test: ---" << pinyin.getPinyin(L"你好");
 
     init.clearStore();
 
@@ -248,7 +245,6 @@ void Controller::runProgramWithIndex(int index) {
 
 void Controller::inputText(const QString &text)
 {
-    qDebug() << "change text";
     if (!text.isEmpty()) {
         Database& db = Database::getInstance();
         db.updateProgramInfo(text.toStdWString());
@@ -258,7 +254,6 @@ void Controller::inputText(const QString &text)
 void Controller::setAutoStart(bool isAutoStart)
 {
     QString  strApplicationName = QApplication::applicationName();//获取应用名称
-    qDebug() << strApplicationName;
     QSettings * settings = new QSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 
     if(isAutoStart)

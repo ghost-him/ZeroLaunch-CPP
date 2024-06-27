@@ -255,9 +255,6 @@ std::wstring Database::simplifiedPinyin(const std::wstring& input)
     return ret;
 }
 
-
-
-
 void Database::testCompareAlgorithm(std::wstring inputValue)
 {
 

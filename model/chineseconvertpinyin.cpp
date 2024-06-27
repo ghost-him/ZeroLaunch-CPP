@@ -31,7 +31,6 @@ QJsonArray ChineseConvertPinyin::readJsonArrayFromFile(const QString &filePath)
 void ChineseConvertPinyin::init()
 {
     QString path = getPinyinConfigPath();
-    qDebug() << path ;
     QJsonArray array = readJsonArrayFromFile(path);
 
     for (const auto& i : array) {

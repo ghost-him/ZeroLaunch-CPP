@@ -106,7 +106,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
 
 QString getProgramVersion()
 {
-    return "QuickLaunch 0.3 alpha 1";
+    return "QuickLaunch 0.3";
 }
 
 QString getPinyinConfigPath()

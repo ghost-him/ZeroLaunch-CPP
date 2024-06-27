@@ -4,5 +4,6 @@
         <file>icon/setting.svg</file>
         <file>icon/tips.svg</file>
         <file>icon/trayIcon.svg</file>
+        <file>icon/refresh.svg</file>
     </qresource>
 </RCC>

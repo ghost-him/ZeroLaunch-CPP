@@ -113,7 +113,7 @@ C:\users\ghost\desktop\root folder
 * [qt6](https://www.qt.io/product/qt6)：程序的UI界面与文件读写，json解析等部分使用qt6编写。
 * [chinese-xinhua](https://github.com/pwxcoo/chinese-xinhua)：程序使用该项目提供的字典（经过处理）来完成中文转拼音。
 
-
+* [Bootstrap](https://icons.bootcss.com/)：提供了免费使用的高质量图标。
 
 
 

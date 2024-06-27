@@ -8,6 +8,7 @@
 #include "ui/settingwindow.h"
 #include <QMessageBox>
 #include "controller/utils.h"
+#include "controller/controller.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,8 +38,16 @@ int main(int argc, char *argv[])
         settingWindow.show();
     });
 
-    trayMenu.addAction(&exitAction);
+    QAction reloadSettingAction("刷新数据库", &trayMenu);
+    reloadSettingAction.setIcon(QIcon(":/icon/refresh.svg"));
+    QObject::connect(&reloadSettingAction, &QAction::triggered, [](){
+        Controller& controller = Controller::getInstance();
+        controller.init();
+    });
     trayMenu.addAction(&openSettingAction);
+    trayMenu.addAction(&reloadSettingAction);
+    trayMenu.addAction(&exitAction);
+
 
     trayIcon.setContextMenu(&trayMenu);
     trayIcon.setIcon(QIcon(":/icon/trayIcon.svg"));
