@@ -121,5 +121,7 @@ C:\users\ghost\desktop\root folder
 
 * [Bootstrap](https://icons.bootcss.com/)：提供了免费使用的高质量图标。
 
+* [LaunchyQt](https://github.com/samsonwang/LaunchyQt)：提供了索引 UWP 应用程序的代码。
+
 
 
