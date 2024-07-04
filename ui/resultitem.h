@@ -16,7 +16,7 @@ public:
     explicit ResultItem(QWidget *parent = nullptr);
     ~ResultItem();
 
-    void setProgramIcon(const QPixmap &pixmap);
+    void setProgramIcon(const QPixmap& pixmap);
     void setProgramName(const QString &name);
 
 private:

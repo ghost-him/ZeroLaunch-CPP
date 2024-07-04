@@ -20,7 +20,6 @@
 
 Controller::Controller() {
     SearchBar& searchBar = SearchBar::getInstance();
-    ResultFrame& resultFrame = ResultFrame::getInstance();
     SettingWindow& settingWindow = SettingWindow::getInstance();
 
     QObject::connect(&settingWindow, &SettingWindow::confirmSetting, [this](SettingWindowConfigure configure){
@@ -45,9 +44,7 @@ void Controller::loadConfigure()
     if (!file.exists()) {
         qDebug() << "File does not exist.";
         initConfigureFile();
-
     }
-
     // 打开文件
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Failed to open the file.";

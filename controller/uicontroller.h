@@ -28,6 +28,9 @@ public:
     ~UIController() = default;
 private:
 
+    QPixmap addMarginToPixmap(const QPixmap &originalPixmap, int margin);
+
+
     const QPixmap& getIconWithEXE(const std::wstring& path);
     const QPixmap& getIconWithABPath(const std::wstring& path);
 

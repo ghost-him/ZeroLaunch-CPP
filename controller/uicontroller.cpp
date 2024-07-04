@@ -5,6 +5,8 @@
 #include "../model/database.h"
 #include "keyboardhook.h"
 #include "utils.h"
+#include <QtSvg/QSvgRenderer>
+#include <QPainter>
 
 UIController::UIController() {
     SearchBar& searchBar = SearchBar::getInstance();
@@ -106,13 +108,30 @@ const QPixmap &UIController::getIcon(const std::wstring &iconPath, bool isUWPApp
         return getIconWithEXE(iconPath);
 }
 
+QPixmap UIController::addMarginToPixmap(const QPixmap &originalPixmap, int margin)
+{
+    // 计算新的 QPixmap 的大小
+    int newWidth = originalPixmap.width() + 2 * margin;
+    int newHeight = originalPixmap.height() + 2 * margin;
+
+    // 创建一个新的 QPixmap
+    QPixmap newPixmap(newWidth, newHeight);
+    newPixmap.fill(Qt::transparent); // 填充为透明色
+
+    // 使用 QPainter 绘制原始的 QPixmap 到新的 QPixmap 中
+    QPainter painter(&newPixmap);
+    painter.drawPixmap(margin, margin, originalPixmap);
+
+    return newPixmap;
+}
+
 const QPixmap &UIController::getIconWithEXE(const std::wstring &path)
 {
     if (iconCache.contains(path)) {
         return iconCache[path];
     }
     QString str = QString::fromStdWString(path);
-    QPixmap icon = getFileIcon(str);
+    QPixmap icon = addMarginToPixmap(getFileIcon(str), 10);
 
     iconCache[path] = std::move(icon);
     return iconCache[path];
@@ -137,7 +156,11 @@ void UIController::updateResultFrame(bool isEmptyText)
 
     resultFrame.clearItem();
     if (isEmptyText) {
-        QPixmap pixmap(":/icon/tips.svg");
+        QIcon icon(":/icon/tips.svg");
+
+        QPixmap pixmap(QSize(100, 100));
+        pixmap = addMarginToPixmap(icon.pixmap(100, 100), 20);
+
         resultFrame.addItem(pixmap, resultFrameEmptyText);
         resultFrame.adjustSizeToFitItems();
         return ;

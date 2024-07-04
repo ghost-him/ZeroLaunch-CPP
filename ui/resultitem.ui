@@ -73,6 +73,9 @@
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
        </widget>
       </item>
       <item>
