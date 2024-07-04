@@ -29,6 +29,7 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->spResultItemNumber->setValue(config.resultItemNumber);
     ui->LEPlaceholderText->setText(config.searchBarPlaceholderText);
     ui->LEEmptyText->setText(config.resultFrameEmptyText);
+    ui->boxSearchUWP->setChecked(config.isSearchUWP);
 }
 
 void SettingWindow::on_btnConfirm_clicked()
@@ -43,6 +44,7 @@ void SettingWindow::on_btnConfirm_clicked()
     configure.resultItemNumber = ui->spResultItemNumber->value();
     configure.searchBarPlaceholderText = ui->LEPlaceholderText->text();
     configure.resultFrameEmptyText = ui->LEEmptyText->text();
+    configure.isSearchUWP = ui->boxSearchUWP->isChecked();
     // 保存文件
     emit confirmSetting(configure);
     hide();

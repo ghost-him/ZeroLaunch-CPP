@@ -1,10 +1,9 @@
 #include "windowhook.h"
 
-WindowHook* WindowHook::instance = nullptr;
-
 WindowHook::WindowHook(): parentWidget(nullptr), callback(nullptr), hHook(NULL)
 {
     instance = this;
+    isStop = false;
     installHook();
 }
 
@@ -18,6 +17,26 @@ void WindowHook::setCallback(std::function<void ()> callback)
     this->callback = callback;
 }
 
+void WindowHook::stop()
+{
+    if (hHook) {
+        UnhookWinEvent(hHook);
+    }
+    instance = nullptr;
+}
+
+WId WindowHook::getWinID()
+{
+    return parentWidget->winId();
+}
+
+void WindowHook::doCallBack()
+{
+    if (callback) {
+        callback();
+    }
+}
+
 WindowHook::~WindowHook()
 {
     if (hHook) {
@@ -26,18 +45,15 @@ WindowHook::~WindowHook()
     instance = nullptr;
 }
 
-void WindowHook::WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime)
+void WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime)
 {
     if (event == EVENT_SYSTEM_FOREGROUND) {
-        if (instance && hwnd != (HWND)instance->parentWidget->winId()) {
-            if (instance->callback) {
-                instance->callback();
-            }
+        WindowHook& instance = WindowHook::getInstance();
+        if (hwnd != (HWND)instance.getWinID()) {
+            instance.doCallBack();
         }
     }
 }
-
-
 
 void WindowHook::installHook()
 {

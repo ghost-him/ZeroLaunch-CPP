@@ -8,22 +8,34 @@
 class WindowHook
 {
 public:
-    WindowHook();
+    // 删除拷贝构造函数和拷贝赋值操作符
+    WindowHook(WindowHook const&) = delete;
+    WindowHook& operator=(WindowHook const&) = delete;
+    // 提供一个全局唯一的接口
+    static WindowHook& getInstance() {
+        static WindowHook instance;
+        return instance;
+    }
 
     void setTargetWidget(QWidget* parentWidget);
 
     void setCallback(std::function<void()> callback);
 
+    void stop();
+
+    WId getWinID();
+
+    void doCallBack();
+
     ~WindowHook();
 
 private:
+    WindowHook();
+    bool isStop;
     QWidget* parentWidget;
     std::function<void()> callback;
     HWINEVENTHOOK hHook;
-    static WindowHook* instance;
-
-    static void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-
+    WindowHook* instance;
 
     void installHook();
 };

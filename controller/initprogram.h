@@ -27,6 +27,8 @@ public:
 
     void initProgramWithProgramFileDir();
 
+    void initUWPProgram();
+
     void initCustomPath();
 
     void clearStore();

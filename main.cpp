@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include "controller/utils.h"
 #include "controller/controller.h"
+#include "controller/windowhook.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,7 +30,10 @@ int main(int argc, char *argv[])
 
     QAction exitAction("退出程序", &trayMenu);
     exitAction.setIcon(QIcon(":/icon/exit.svg"));
-    QObject::connect(&exitAction, &QAction::triggered, &app, &SingleApplication::quit);
+    QObject::connect(&exitAction, &QAction::triggered, [&](){
+        WindowHook::getInstance().stop();
+        app.quit();
+    });
 
     QAction openSettingAction("打开设置", &trayMenu);
     openSettingAction.setIcon(QIcon(":/icon/setting.svg"));

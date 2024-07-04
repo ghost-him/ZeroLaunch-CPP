@@ -16,6 +16,7 @@
 #include "../controller/utils.h"
 #include "../ui/settingwindow.h"
 #include "../model/chineseconvertpinyin.h"
+#include "uwpapp.h"
 
 Controller::Controller() {
     SearchBar& searchBar = SearchBar::getInstance();
@@ -145,6 +146,10 @@ void Controller::init()
     init.clearStore();
 
     init.initCustomPath();
+
+    if (configure["searchUWP"].toBool()) {
+        init.initUWPProgram();
+    }
     if (configure["searchStartMenu"].toBool()) {
         init.initProgramWithStartMenu();
     }
@@ -176,71 +181,26 @@ void Controller::runProgramWithIndex(int index) {
     auto& programsFile = db.getProgramsFile();
 
     const std::wstring& programPath = programsFile[index].programPath;
+    bool isUWPApp = programsFile[index].isUWPApp;
+
     db.addLaunchTime(index);
-    // Log the program path to ensure it is correct
     qDebug() << "Attempting to run program: " << QString::fromStdWString(programPath);
-    // Extract the directory part of the path using std::filesystem
+
+    if (isUWPApp) {
+        // 如果当前的程序是UWP应用
+        UWPAppManager& app = UWPAppManager::getInstance();
+        app.lunchUWPApp(programPath);
+        return;
+    }
+    // 普通应用的启动方式
     std::filesystem::path path(programPath);
     std::wstring workingDirectory = path.parent_path().wstring();
-
-    // Try to start the process normally
     if (!startProcessNormally(programPath, workingDirectory)) {
         qDebug() << "Attempting to run process with elevation.";
         if (!startProcessWithElevation(programPath, workingDirectory)) {
             qDebug() << "Failed to start process even with elevation.";
         }
     }
-
-    /*
-    // 以下是使用cmd.exe启动的代码，该代码作为启动程序没有问题
-    Database& db = Database::getInstance();
-    auto& programsFile = db.getProgramsFile();
-
-    const std::wstring& programPath = programsFile[index].programPath;
-    db.addLaunchTime(index);
-
-    // Prepare the command line to run the program using cmd.exe
-    std::wstring commandLine = L"cmd.exe /c start \"\" \"" + programPath + L"\"";
-
-    // Log the command line to ensure it is correct
-    qDebug() << "Attempting to run command: " << commandLine;
-
-    // Prepare the STARTUPINFO structure
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
-
-    // Create a writable copy of the command line
-    std::vector<wchar_t> commandLineBuffer(commandLine.begin(), commandLine.end());
-    commandLineBuffer.push_back(0);
-
-    // Extract the directory part of the path using std::filesystem
-    std::filesystem::path path(programPath);
-    std::wstring workingDirectory = path.parent_path().wstring();
-
-    // Create the process
-    if (!CreateProcess(
-            NULL,           // Module name (use command line directly)
-            commandLineBuffer.data(), // Command line
-            NULL,           // Process handle not inheritable
-            NULL,           // Thread handle not inheritable
-            FALSE,          // Set handle inheritance to FALSE
-            CREATE_NO_WINDOW | DETACHED_PROCESS, // No console window, detached process
-            NULL,           // Use parent's environment block
-            workingDirectory.c_str(),           // Use parent's starting directory
-            &si,            // Pointer to STARTUPINFO structure
-            &pi)            // Pointer to PROCESS_INFORMATION structure
-        ) {
-        qDebug() << "Failed to create process. Error: " << GetLastError();
-    } else {
-        // Close process and thread handles to ensure they are completely detached
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-        qDebug() << "Process created successfully: " << commandLine;
-    }
-    */
 }
 
 void Controller::inputText(const QString &text)

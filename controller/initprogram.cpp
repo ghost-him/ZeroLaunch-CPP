@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QFile>
 #include "utils.h"
+#include "uwpapp.h"
 
 InitProgram::InitProgram() {}
 
@@ -28,8 +29,11 @@ void InitProgram::initProgramWithRegistery()
 
 void InitProgram::initProgramWithStartMenu()
 {
-    QString commonStartMenuPath = getSystemStartMenuPath();
-    QString userStartMenuPath = getUserStartMenuPath();
+    QString commonStartMenuPath = GetShellDirectory(CSIDL_COMMON_STARTMENU);
+    QString userStartMenuPath = GetShellDirectory(CSIDL_STARTMENU);
+
+    qDebug() << commonStartMenuPath;
+    qDebug() << userStartMenuPath;
 
     initTargetDirectory(commonStartMenuPath.toStdWString(), -1, 0);
     initTargetDirectory(userStartMenuPath.toStdWString(), -1, 0);
@@ -44,6 +48,17 @@ void InitProgram::initProgramWithProgramFileDir()
     QString programFilesPath32 = getDefaultProgramFilesPath(false);
     if (!programFilesPath32.isEmpty()) {
         initTargetDirectory(programFilesPath32.toStdWString(), 1, 0);
+    }
+}
+
+void InitProgram::initUWPProgram()
+{
+    UWPAppManager& app = UWPAppManager::getInstance();
+    Database& db = Database::getInstance();
+    auto uwps = app.getUWPApp();
+
+    for (auto& uwp : uwps) {
+        db.insertProgramInfo(uwp.name, uwp.appID, uwp.picturePath, 0, true);
     }
 }
 
@@ -113,7 +128,7 @@ void InitProgram::initTargetDirectory(const std::wstring &path, unsigned int dep
                     // 获取该程序的目录
                     std::wstring programPath = entry.path().wstring();
                     // 插入到数据库中
-                    db.insertProgramInfo(programName, programPath, level);
+                    db.insertProgramInfo(programName, programPath, programPath, level, false);
                 } else if (entry.is_directory()) {
                     traverse(entry.path(), currentDepth + 1);
                 }

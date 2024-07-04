@@ -18,6 +18,7 @@ struct SettingWindowConfigure {
     int resultItemNumber;
     QString searchBarPlaceholderText;
     QString resultFrameEmptyText;
+    bool isSearchUWP;
 };
 
 
@@ -42,5 +43,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config);
 SettingWindowConfigure buildClassWithJson(const QJsonObject& json);
 
 QString getProgramVersion();
+
+QString GetShellDirectory(int type);
 
 #endif // UTILS_H

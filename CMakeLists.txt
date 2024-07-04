@@ -23,6 +23,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/program)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_library(PROPSYS_LIB NAMES propsys HINTS "C:\\Program Files (x86)\\Windows Kits\\10\\Lib\\10.0.26100.0\\um\\x64")
 
 set(PROJECT_SOURCES
         main.cpp
@@ -47,6 +48,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         controller/uicontroller.h controller/uicontroller.cpp
         controller/windowhook.h controller/windowhook.cpp
         model/chineseconvertpinyin.h model/chineseconvertpinyin.cpp
+        controller/uwpapp.h controller/uwpapp.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QuickLaunch APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -67,6 +69,13 @@ else()
 endif()
 
 target_link_libraries(QuickLaunch PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+if(PROPSYS_LIB)
+    target_link_libraries(QuickLaunch PRIVATE ${PROPSYS_LIB})
+else()
+    message(FATAL_ERROR "Could not find propsys.lib")
+endif()
+
 
 message(${CMAKE_SOURCE_DIR}/model/pinyin.json)
 message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

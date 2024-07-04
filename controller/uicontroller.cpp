@@ -27,6 +27,8 @@ UIController::UIController() {
         resultFrame.show();
     });
     // 初始化窗口监视器
+    WindowHook& windowHook = WindowHook::getInstance();
+
     windowHook.setTargetWidget(&searchBar);
     windowHook.setCallback([](){
         SearchBar& searchBar = SearchBar::getInstance();
@@ -85,8 +87,7 @@ void UIController::initProgramIcon()
     int count = 0;
     for (int i = 0; i < programs.size(); i ++) {
         const ProgramNode& program = programs[i];
-        const std::wstring& programPath = program.programPath;
-        getIconWithPath(programPath);
+        getIcon(program.iconPath, program.isUWPApp);
         count ++;
     }
     qDebug() << "已成功加载：" << count ;
@@ -97,7 +98,15 @@ void UIController::clearIconCache()
     iconCache.clear();
 }
 
-const QPixmap &UIController::getIconWithPath(const std::wstring &path)
+const QPixmap &UIController::getIcon(const std::wstring &iconPath, bool isUWPApp)
+{
+    if (isUWPApp)
+        return getIconWithABPath(iconPath);
+    else
+        return getIconWithEXE(iconPath);
+}
+
+const QPixmap &UIController::getIconWithEXE(const std::wstring &path)
 {
     if (iconCache.contains(path)) {
         return iconCache[path];
@@ -109,6 +118,16 @@ const QPixmap &UIController::getIconWithPath(const std::wstring &path)
     return iconCache[path];
 }
 
+const QPixmap &UIController::getIconWithABPath(const std::wstring &path)
+{
+    if (iconCache.contains(path)) {
+        return iconCache[path];
+    }
+    QString Qpath = QString::fromStdWString(path);
+    QPixmap icon(Qpath);
+    iconCache[path] = std::move(icon);
+    return iconCache[path];
+}
 
 void UIController::updateResultFrame(bool isEmptyText)
 {
@@ -127,9 +146,9 @@ void UIController::updateResultFrame(bool isEmptyText)
     for (int i = 0; i < resultItemNumber && i < programs.size(); i ++) {
         auto& programItem = programs[i];
         const std::wstring& programName = programItem.programName;
-        const std::wstring& programPath = programItem.programPath;
+        const std::wstring& iconPath = programItem.iconPath;
 
-        const QPixmap& programIcon = getIconWithPath(programPath);
+        const QPixmap& programIcon = getIcon(iconPath, programItem.isUWPApp);
         QString str = QString::fromStdWString(programName);
 
         resultFrame.addItem(programIcon, str);

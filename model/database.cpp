@@ -18,7 +18,7 @@ double Database::computeCombinedValue(const std::wstring &storeName, const std::
     return editValue + kmpValue + lcsValue * 0.2;
 }
 
-void Database::insertProgramInfo(const std::wstring &programName, const std::wstring &programPath, int stableLevel)
+void Database::insertProgramInfo(const std::wstring &programName, const std::wstring &programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp)
 {
     int t = programName.find_last_of(L".");
     std::wstring showName = programName.substr(0, t);
@@ -34,7 +34,7 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     std::wstring pinyin = converter.getPinyin(compareName);
     std::wstring firstLatterName = simplifiedPinyin(pinyin);
 
-    programs.emplace_back(showName, compareName, pinyin, firstLatterName, programPath, 0, stableLevel, 0);
+    programs.emplace_back(showName, compareName, pinyin, firstLatterName, programPath, iconPath, 0, stableLevel, 0, isUWPApp);
 }
 
 void Database::updateProgramInfo(const std::wstring &inputValue)

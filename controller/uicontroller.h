@@ -23,10 +23,13 @@ public:
 
     void clearIconCache();
 
-    const QPixmap& getIconWithPath(const std::wstring& path);
+    const QPixmap& getIcon(const std::wstring& iconPath, bool isUWPApp);
 
+    ~UIController() = default;
 private:
-    WindowHook windowHook;
+
+    const QPixmap& getIconWithEXE(const std::wstring& path);
+    const QPixmap& getIconWithABPath(const std::wstring& path);
 
     int resultItemNumber;
 

@@ -39,6 +39,7 @@ QJsonObject getDefaultSettingJson()
     jsonObject["resultItemNumber"] = 4;
     jsonObject["searchBarPlaceholderText"] = "Hello, QuickLaunch!";
     jsonObject["resultFrameEmptyText"] = "当前搜索无结果";
+    jsonObject["searchUWP"] = true;
 
     return jsonObject;
 }
@@ -84,6 +85,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     json["resultItemNumber"] = config.resultItemNumber;
     json["searchBarPlaceholderText"] = config.searchBarPlaceholderText;
     json["resultFrameEmptyText"] = config.resultFrameEmptyText;
+    json["searchUWP"] = config.isSearchUWP;
     return json;
 }
 
@@ -100,16 +102,22 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     ret.resultItemNumber = json["resultItemNumber"].toInt();
     ret.searchBarPlaceholderText = json["searchBarPlaceholderText"].toString();
     ret.resultFrameEmptyText = json["resultFrameEmptyText"].toString();
-
+    ret.isSearchUWP = json["searchUWP"].toBool();
     return ret;
 }
 
 QString getProgramVersion()
 {
-    return "QuickLaunch 0.3";
+    return "QuickLaunch 0.4";
 }
 
 QString getPinyinConfigPath()
 {
     return QApplication::applicationDirPath() + "/pinyin.json";
+}
+
+QString GetShellDirectory(int type) {
+    wchar_t buffer[_MAX_PATH];
+    SHGetFolderPathW(NULL, type, NULL, 0, buffer);
+    return QString::fromWCharArray(buffer);
 }

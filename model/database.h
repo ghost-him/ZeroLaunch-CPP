@@ -13,9 +13,13 @@ struct ProgramNode {
     std::wstring firstLatterName;
 
     std::wstring programPath;
+    std::wstring iconPath;
+
     double programLevel;
     int stableLevel;
     int launchTime;
+
+    bool isUWPApp;
 
     const bool operator<(const ProgramNode& other) const {
         if (programLevel != other.programLevel) {
@@ -41,7 +45,7 @@ public:
         return instance;
     }
 
-    void insertProgramInfo(const std::wstring& programName, const std::wstring& programPath, int stableLevel);
+    void insertProgramInfo(const std::wstring& programName, const std::wstring& programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp);
 
     void updateProgramInfo(const std::wstring& inputValue);
 

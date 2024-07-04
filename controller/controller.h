@@ -29,14 +29,12 @@ public:
 
     void inputText(const QString& text);
 
-
-
+    ~Controller() = default;
 private:
-
-
     UIController uiController;
 
     Controller();
+
 
     void loadConfigure();
 
