@@ -272,6 +272,22 @@
     <string>确定</string>
    </property>
   </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>400</y>
+     <width>501</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>软件更新地址：https://github.com/ghost-him/QuickLaunch/releases</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
