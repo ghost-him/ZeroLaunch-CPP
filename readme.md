@@ -15,6 +15,18 @@
 
 该软件因个人需要而开发，因此会长期维护！
 
+## 软件运行界面
+
+软件的运行界面：
+
+![image-20240707234443465](C:\Users\ghost\code\qt\quicklaunch\assets\image-20240707234443465.png)
+
+![image-20240707234510649](C:\Users\ghost\code\qt\quicklaunch\assets\image-20240707234510649.png)
+
+软件的设置界面：
+
+![image-20240707234524868](C:\Users\ghost\code\qt\quicklaunch\assets\image-20240707234524868.png)
+
 ## 快速使用
 
 双击`QuickLaunch.exe`即可运行程序。程序运行在系统的托盘中，右键图标可以打开二级菜单。
