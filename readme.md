@@ -19,13 +19,13 @@
 
 软件的运行界面：
 
-![image-20240707234443465](C:\Users\ghost\code\qt\quicklaunch\assets\image-20240707234443465.png)
+![image-20240707234443465](https://raw.githubusercontent.com/ghost-him/QuickLaunch/main/assets/image-20240707234443465.png)
 
-![image-20240707234510649](C:\Users\ghost\code\qt\quicklaunch\assets\image-20240707234510649.png)
+![image-20240707234510649](https://raw.githubusercontent.com/ghost-him/QuickLaunch/main/assets/image-20240707234510649.png)
 
 软件的设置界面：
 
-![image-20240707234524868](C:\Users\ghost\code\qt\quicklaunch\assets\image-20240707234524868.png)
+![image-20240707234524868](https://raw.githubusercontent.com/ghost-him/QuickLaunch/main/assets/image-20240707234524868.png)
 
 ## 快速使用
 
