@@ -1,3 +1,5 @@
+> 该项目将会使用 Rust 语言进行重构，预计将会使用 Iced 库完成 UI 界面的开发。当 Rust 版发布后，C++的代码将会不再维护！
+
 # QuickLaunch
 
 [国内项目地址](https://gitee.com/ghost-him/QuickLaunch)，[国外项目地址](https://github.com/ghost-him/QuickLaunch)
