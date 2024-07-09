@@ -282,7 +282,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>软件更新地址：https://github.com/ghost-him/QuickLaunch/releases</string>
+    <string>软件更新地址：https://github.com/ghost-him/ZeroLaunch-CPP/releases</string>
    </property>
    <property name="readOnly">
     <bool>true</bool>

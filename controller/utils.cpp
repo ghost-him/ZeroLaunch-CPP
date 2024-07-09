@@ -37,7 +37,7 @@ QJsonObject getDefaultSettingJson()
     jsonObject["searchProgramFile"] = false;
     jsonObject["preLoadResource"] = false;
     jsonObject["resultItemNumber"] = 4;
-    jsonObject["searchBarPlaceholderText"] = "Hello, QuickLaunch!";
+    jsonObject["searchBarPlaceholderText"] = "Hello, ZeroLaunch!";
     jsonObject["resultFrameEmptyText"] = "当前搜索无结果";
     jsonObject["searchUWP"] = true;
 
@@ -108,7 +108,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
 
 QString getProgramVersion()
 {
-    return "QuickLaunch 0.4";
+    return "ZeroLaunch 0.4.1";
 }
 
 QString getPinyinConfigPath()

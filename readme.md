@@ -1,12 +1,10 @@
-> 该项目将会使用 Rust 语言进行重构，预计将会使用 Iced 库完成 UI 界面的开发。当 Rust 版发布后，C++的代码将会不再维护！
+# ZeroLaunch-CPP
 
-# QuickLaunch
-
-[国内项目地址](https://gitee.com/ghost-him/QuickLaunch)，[国外项目地址](https://github.com/ghost-him/QuickLaunch)
+[国内项目地址](https://gitee.com/ghost-him/ZeroLaunch-CPP)，[国外项目地址](https://github.com/ghost-him/ZeroLaunch-CPP)
 
 ## 介绍
 
-`QuickLaunch` 是一个使用 `qt` 开发的运行在 `windows` 环境下的用于快速启动应用程序的软件。
+`ZeroLaunch` 是一个使用 `qt` 开发的运行在 `windows` 环境下的用于快速启动应用程序的软件。
 
 软件特点：
 
@@ -21,17 +19,17 @@
 
 软件的运行界面：
 
-![image-20240707234443465](https://raw.githubusercontent.com/ghost-him/QuickLaunch/main/assets/image-20240707234443465.png)
+![image-20240707234443465](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/image-20240707234443465.png)
 
-![image-20240707234510649](https://raw.githubusercontent.com/ghost-him/QuickLaunch/main/assets/image-20240707234510649.png)
+![image-20240707234510649](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/image-20240707234510649.png)
 
 软件的设置界面：
 
-![image-20240707234524868](https://raw.githubusercontent.com/ghost-him/QuickLaunch/main/assets/image-20240707234524868.png)
+![image-20240707234524868](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/image-20240707234524868.png)
 
 ## 快速使用
 
-双击`QuickLaunch.exe`即可运行程序。程序运行在系统的托盘中，右键图标可以打开二级菜单。
+双击`ZeroLaunch.exe`即可运行程序。程序运行在系统的托盘中，右键图标可以打开二级菜单。
 
 基本操作：
 
@@ -49,7 +47,7 @@
 
 ### 下载预编译包
 
-去`release`下载最新的版本，然后解压，点击`QuickLaunch.exe`即可运行。
+去`release`下载最新的版本，然后解压，点击`ZeroLaunch.exe`即可运行。
 
 ### 编译使用
 
@@ -67,7 +65,7 @@
 
 由于存在多音字的情况，而软件中只考虑了单音字，因此会存在错标拼音的情况（`乐`，可以读做 `yue` ，也可读做 `le`）。由于可以通过模糊匹配来弥补拼音的不足，所以这里暂时不考虑解决该情况。如果该情况产生的问题比较严重，可以通过issue来通知我改进程序。
 
-详细的搜索算法介绍可点此链接查看：[github](https://github.com/ghost-him/QuickLaunch/blob/main/doc/%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D.md)
+详细的搜索算法介绍可点此链接查看：[github](https://github.com/ghost-him/ZeroLaunch-CPP/blob/main/doc/%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95%E4%BB%8B%E7%BB%8D.md)
 
 ### 自定义功能
 
@@ -101,7 +99,7 @@ C:\users\ghost\desktop\root folder
 
 #### 自定义搜索栏提示文字
 
-默认为 `Hello, QuickLaunch!`
+默认为 `Hello, ZeroLaunch!`
 
 #### 自定义搜索结果空白提示
 
