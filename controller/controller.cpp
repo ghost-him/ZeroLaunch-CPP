@@ -21,6 +21,7 @@
 Controller::Controller() {
     SearchBar& searchBar = SearchBar::getInstance();
     SettingWindow& settingWindow = SettingWindow::getInstance();
+    ResultFrame& resultFrame = ResultFrame::getInstance();
 
     QObject::connect(&settingWindow, &SettingWindow::confirmSetting, [this](SettingWindowConfigure configure){
         this->saveSetting(configure);
@@ -31,6 +32,10 @@ Controller::Controller() {
     });
 
     QObject::connect(&searchBar, &SearchBar::launchSelectedProgram, [this](){
+        this->launchSelectedProgram();
+    });
+
+    QObject::connect(&resultFrame, &ResultFrame::sg_launchSelectedProgram, [this](){
         this->launchSelectedProgram();
     });
 

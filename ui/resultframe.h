@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <mutex>
+#include <QListWidgetItem>
 
 namespace Ui {
 class ResultFrame;
@@ -43,6 +44,13 @@ public:
 
     // 调整大小以匹配项目
     void adjustSizeToFitItems();
+
+signals:
+
+    void sg_launchSelectedProgram();
+
+private slots:
+    void on_listWidget_itemClicked(QListWidgetItem *item);
 
 private:
     ResultFrame(QWidget *parent = nullptr);

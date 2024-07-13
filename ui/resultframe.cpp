@@ -187,3 +187,9 @@ void ResultFrame::adjustSizeToFitItems()
 
 
 
+
+void ResultFrame::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+    emit sg_launchSelectedProgram();
+}
+

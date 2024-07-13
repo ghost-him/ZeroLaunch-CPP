@@ -53,19 +53,23 @@ SearchBar::SearchBar() {
     palette.setColor(QPalette::Text, Qt::black);
     setPalette(palette);
 
-    this->setPlaceholderText("Hello, QuickLaunch!");
     setAttribute(Qt::WA_TranslucentBackground);
 
-    this->setStyleSheet(QString("background-color: white;"
+    this->setStyleSheet(QString(
+                        "QLineEdit{"
+                            "background-color: white;"
                             "border: 1px solid gray;"
                             "border-radius: 10px;"  // 设置圆角半径
                             "padding: 8px;"
-                            "}"
+                        "}"
                         "QMenu::item:selected{"
                         "   background-color: %1;"        // 设置选中项的背景颜色
                         "   color: %2;"                   // 设置选中项的文字颜色
-                                "}").arg(                palette.color(QPalette::Highlight).name(),          // 获取系统主题的高亮颜色
-                                 palette.color(QPalette::HighlightedText).name()));    // 获取系统主题的高亮文字颜色));
+                        "}").arg(
+                                palette.color(QPalette::Highlight).name(),          // 获取系统主题的高亮颜色
+                                palette.color(QPalette::HighlightedText).name()
+                                )
+                        );    // 获取系统主题的高亮文字颜色));
     // 设置事件钩子
 /*
     HWINEVENTHOOK hWinEventHook = SetWinEventHook(
