@@ -24,6 +24,8 @@ public:
 
     void initWindow(const SettingWindowConfigure& config);
 
+    void show();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 

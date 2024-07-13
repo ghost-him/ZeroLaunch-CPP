@@ -36,6 +36,13 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
 }
 
+void SettingWindow::show()
+{
+    QWidget::show();
+    raise();
+    activateWindow();
+}
+
 void SettingWindow::closeEvent(QCloseEvent *event)
 {
     this->hide();
