@@ -174,8 +174,12 @@ void Controller::launchSelectedProgram()
     ResultFrame& resultFrame = ResultFrame::getInstance();
     int index = resultFrame.getCurrentItemIndex();
 
-    uiController.hide();
-    runProgramWithIndex(index);
+    if (SearchBar::getInstance().text().isEmpty()) {
+        uiController.hide();
+    } else {
+        uiController.hide();
+        runProgramWithIndex(index);
+    }
 }
 
 void Controller::runProgramWithIndex(int index) {
