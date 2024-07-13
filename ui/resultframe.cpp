@@ -6,6 +6,7 @@
 #include "../controller/controller.h"
 #include "../controller/utils.h"
 #include <QScrollBar>
+#include <QPropertyAnimation>
 #include <QSize>
 
 ResultFrame::ResultFrame(QWidget *parent)
@@ -105,8 +106,21 @@ void ResultFrame::clearItem()
 
 void ResultFrame::show()
 {
+    this->setWindowOpacity(1.0); // 重置不透明度
     QWidget::show();
     raise();
+}
+
+void ResultFrame::hide()
+{
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
+    animation->setDuration(50); // 动画持续时间
+    animation->setStartValue(1.0);
+    animation->setEndValue(0.0);
+
+    connect(animation, &QPropertyAnimation::finished, this, &QWidget::hide);
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 

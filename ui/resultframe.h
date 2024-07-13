@@ -39,6 +39,8 @@ public:
 
     void show();
 
+    void hide();
+
     // 调整大小以匹配项目
     void adjustSizeToFitItems();
 

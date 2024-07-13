@@ -47,7 +47,6 @@ void WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idOb
 {
     if (event == EVENT_OBJECT_FOCUS) {
         WindowHook& instance = WindowHook::getInstance();
-        qDebug() << "target winid: " << (int)hwnd;
         instance.hideWindow(hwnd);
     }
 }

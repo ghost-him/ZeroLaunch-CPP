@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <QMenu>
+#include <QPropertyAnimation>
 
 HWND searchBar_hwnd;
 /*
@@ -171,6 +172,7 @@ void SearchBar::pressESC()
 
 void SearchBar::show()
 {
+    this->setWindowOpacity(1.0); // 重置不透明度
     setText("");
     QWidget::show();
     raise();
@@ -193,5 +195,14 @@ void SearchBar::show()
 
 void SearchBar::hide()
 {
-    QWidget::hide();
+
+    QPropertyAnimation *animation = new QPropertyAnimation(this, "windowOpacity");
+    animation->setDuration(50); // 动画持续时间
+    animation->setStartValue(1.0);
+    animation->setEndValue(0.0);
+
+    connect(animation, &QPropertyAnimation::finished, this, &QLineEdit::hide);
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    //QLineEdit::hide();
 }
