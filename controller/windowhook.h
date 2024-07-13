@@ -4,7 +4,6 @@
 #include <functional>
 #include <QWidget>
 #include <windows.h>
-#include <unordered_map>
 
 class WindowHook
 {
@@ -18,28 +17,27 @@ public:
         return instance;
     }
 
+    void setTargetWidget(QWidget* parentWidget);
+
+    void setCallback(std::function<void()> callback);
+
     void stop();
 
+    WId getWinID();
+
+    void doCallBack();
+
     ~WindowHook();
-
-    void hideWindow(HWND targetWinId);
-
-    void registerWinID(WId winID, std::function<void()> callbackFunc);
-
-    void registerDefaultCallback(std::function<void()> callbackFunc);
 
 private:
     WindowHook();
     bool isStop;
     QWidget* parentWidget;
-    std::function<void()> defaultCallback;
+    std::function<void()> callback;
     HWINEVENTHOOK hHook;
     WindowHook* instance;
 
     void installHook();
-
-    std::unordered_map<WId, std::function<void()>> store;
-
 };
 
 #endif // WINDOWHOOK_H

@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QMenu>
 #include <QPropertyAnimation>
+#include <QPalette>
 
 HWND searchBar_hwnd;
 /*
@@ -54,12 +55,17 @@ SearchBar::SearchBar() {
 
     this->setPlaceholderText("Hello, QuickLaunch!");
     setAttribute(Qt::WA_TranslucentBackground);
-    this->setStyleSheet("background-color: white;"
+
+    this->setStyleSheet(QString("background-color: white;"
                             "border: 1px solid gray;"
                             "border-radius: 10px;"  // 设置圆角半径
-                            "padding: 0 8px;"
-                            "selection-background-color: lightblue;"
-                            "}");
+                            "padding: 8px;"
+                            "}"
+                        "QMenu::item:selected{"
+                        "   background-color: %1;"        // 设置选中项的背景颜色
+                        "   color: %2;"                   // 设置选中项的文字颜色
+                                "}").arg(                palette.color(QPalette::Highlight).name(),          // 获取系统主题的高亮颜色
+                                 palette.color(QPalette::HighlightedText).name()));    // 获取系统主题的高亮文字颜色));
     // 设置事件钩子
 /*
     HWINEVENTHOOK hWinEventHook = SetWinEventHook(
@@ -83,7 +89,7 @@ void SearchBar::contextMenuEvent(QContextMenuEvent *event)
 {
     // 创建新的上下文菜单
     std::shared_ptr<QMenu> menu = std::make_shared<QMenu>(new QMenu(this));
-
+    menu->setAttribute(Qt::WA_TranslucentBackground);
     // 添加默认的中文菜单项
     QAction *undoAction = menu->addAction(tr("撤销"));
     QAction *redoAction = menu->addAction(tr("重做"));
@@ -156,6 +162,7 @@ bool SearchBar::nativeEvent(const QByteArray &eventType, void *message, qintptr 
 
 void SearchBar::openSettingWindow()
 {
+    emit hideProgram();
     emit sg_openSettingWindow();
 }
 

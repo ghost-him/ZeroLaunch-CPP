@@ -1,10 +1,20 @@
 #include "windowhook.h"
 
-WindowHook::WindowHook(): parentWidget(nullptr), defaultCallback(nullptr), hHook(NULL)
+WindowHook::WindowHook(): parentWidget(nullptr), callback(nullptr), hHook(NULL)
 {
     instance = this;
     isStop = false;
     installHook();
+}
+
+void WindowHook::setTargetWidget(QWidget *parentWidget)
+{
+    this->parentWidget = parentWidget;
+}
+
+void WindowHook::setCallback(std::function<void ()> callback)
+{
+    this->callback = callback;
 }
 
 void WindowHook::stop()
@@ -15,6 +25,18 @@ void WindowHook::stop()
     instance = nullptr;
 }
 
+WId WindowHook::getWinID()
+{
+    return parentWidget->winId();
+}
+
+void WindowHook::doCallBack()
+{
+    if (callback) {
+        callback();
+    }
+}
+
 WindowHook::~WindowHook()
 {
     if (hHook) {
@@ -23,31 +45,13 @@ WindowHook::~WindowHook()
     instance = nullptr;
 }
 
-void WindowHook::hideWindow(HWND targetWinId)
-{
-    if (store.contains((WId)targetWinId)) {
-        store[(WId)targetWinId]();
-    } else {
-        if (defaultCallback) {
-            defaultCallback();
-        }
-    }
-}
-
-void WindowHook::registerWinID(WId winID, std::function<void()> callbackFunc) {
-    store[winID] = callbackFunc;
-}
-
-void WindowHook::registerDefaultCallback(std::function<void ()> callbackFunc)
-{
-    defaultCallback = callbackFunc;
-}
-
 void WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime)
 {
-    if (event == EVENT_OBJECT_FOCUS) {
+    if (event == EVENT_SYSTEM_FOREGROUND) {
         WindowHook& instance = WindowHook::getInstance();
-        instance.hideWindow(hwnd);
+        if (hwnd != (HWND)instance.getWinID()) {
+            instance.doCallBack();
+        }
     }
 }
 
@@ -55,10 +59,10 @@ void WindowHook::installHook()
 {
     if (!hHook) {
         hHook = SetWinEventHook(
-            EVENT_OBJECT_FOCUS, EVENT_OBJECT_FOCUS,
+            EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
             NULL, WinEventProc,
             0, 0,
-            WINEVENT_OUTOFCONTEXT
+            WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS
             );
 
         if (!hHook) {
