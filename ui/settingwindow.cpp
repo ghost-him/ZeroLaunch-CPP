@@ -4,13 +4,15 @@
 #include <QMessageBox>
 #include <QJsonObject>
 #include "../controller/utils.h"
+#include <QCloseEvent>
 
 SettingWindow::SettingWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::SettingWindow)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::FramelessWindowHint); // 不显示任务栏图标
+    this->setWindowTitle("设置");
+
 }
 
 SettingWindow::~SettingWindow()
@@ -30,6 +32,12 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->LEPlaceholderText->setText(config.searchBarPlaceholderText);
     ui->LEEmptyText->setText(config.resultFrameEmptyText);
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
+}
+
+void SettingWindow::closeEvent(QCloseEvent *event)
+{
+    on_btnConfirm_clicked();
+    event->ignore();  // 忽略关闭事件
 }
 
 void SettingWindow::on_btnConfirm_clicked()

@@ -22,8 +22,11 @@ public:
         return instance;
     }
 
-
     void initWindow(const SettingWindowConfigure& config);
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 
 signals:
     void confirmSetting(SettingWindowConfigure configure);
