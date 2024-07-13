@@ -1,9 +1,9 @@
 #include "singleapplication.h"
 
-SingleApplication::SingleApplication(int &argc, char *argv[]) : QApplication(argc, argv), sharedMemory("QuickLaunchKey") {
+SingleApplication::SingleApplication(int &argc, char *argv[]) : QApplication(argc, argv), sharedMemory("ZeroLaunchKey") {
 
     // 创建一个系统信号量
-    QSystemSemaphore semaphore("QuickLaunchSemaphoreKey", 1);
+    QSystemSemaphore semaphore("ZeroLaunchSemaphoreKey", 1);
     semaphore.acquire();
     // 尝试将共享内存附加到进程
     if (sharedMemory.attach())
