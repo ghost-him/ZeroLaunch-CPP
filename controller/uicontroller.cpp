@@ -33,14 +33,19 @@ UIController::UIController() {
     });
     // 初始化窗口监视器
     WindowHook& windowHook = WindowHook::getInstance();
+    SettingWindow& settingWindow = SettingWindow::getInstance();
 
-    windowHook.setTargetWidget(&searchBar);
-    windowHook.setCallback([](){
-        SearchBar& searchBar = SearchBar::getInstance();
-        ResultFrame& resultFrame = ResultFrame::getInstance();
+    windowHook.registerWinID(searchBar.winId(), [&](){
+        settingWindow.hide();
+    });
 
-        searchBar.hide();
-        resultFrame.hide();
+    windowHook.registerWinID(settingWindow.winId(), [&](){
+        this->hide();
+    });
+
+    windowHook.registerDefaultCallback([&](){
+        settingWindow.hide();
+        this->hide();
     });
 
     searchBar.show();

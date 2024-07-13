@@ -60,5 +60,12 @@ int main(int argc, char *argv[])
 
     //Database::getInstance().testCompareAlgorithm(L"stem");
 
+    qDebug() << "setting window winid: " << SettingWindow::getInstance().winId();
+    qDebug() << "searchBar win id: " << SearchBar::getInstance().winId();
+
+
+
+
+
     return app.exec();
 }
