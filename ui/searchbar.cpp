@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <QTimer>
 #include <QApplication>
+#include <QMenu>
 
 HWND searchBar_hwnd;
 /*
@@ -77,6 +78,41 @@ void SearchBar::focusOnSearchBar()
     this->setFocus();
 }
 
+void SearchBar::contextMenuEvent(QContextMenuEvent *event)
+{
+    // 创建新的上下文菜单
+    std::shared_ptr<QMenu> menu = std::make_shared<QMenu>(new QMenu(this));
+
+    // 添加默认的中文菜单项
+    QAction *undoAction = menu->addAction(tr("撤销"));
+    QAction *redoAction = menu->addAction(tr("重做"));
+    menu->addSeparator();
+    QAction *cutAction = menu->addAction(tr("剪切"));
+    QAction *copyAction = menu->addAction(tr("复制"));
+    QAction *pasteAction = menu->addAction(tr("粘贴"));
+    menu->addSeparator();
+    QAction *deleteAction = menu->addAction(tr("删除"));
+    QAction *selectAllAction = menu->addAction(tr("全选"));
+    menu->addSeparator();
+    // 添加自定义菜单项
+    QAction *customAction = menu->addAction(tr("打开设置"));
+
+    // 连接默认菜单项的动作
+    connect(undoAction, &QAction::triggered, this, &QLineEdit::undo);
+    connect(redoAction, &QAction::triggered, this, &QLineEdit::redo);
+    connect(cutAction, &QAction::triggered, this, &QLineEdit::cut);
+    connect(copyAction, &QAction::triggered, this, &QLineEdit::copy);
+    connect(pasteAction, &QAction::triggered, this, &QLineEdit::paste);
+    connect(deleteAction, &QAction::triggered, this, &QLineEdit::del);
+    connect(selectAllAction, &QAction::triggered, this, &QLineEdit::selectAll);
+
+    // 连接自定义菜单项的动作
+    connect(customAction, &QAction::triggered, this, &SearchBar::openSettingWindow);
+
+    // 显示菜单
+    menu->exec(event->globalPos());
+}
+
 void SearchBar::keyPressEvent(QKeyEvent *event)
 {
     // 检查按下的键是否为 'j' 且 Ctrl 键是否按下
@@ -115,6 +151,11 @@ bool SearchBar::nativeEvent(const QByteArray &eventType, void *message, qintptr 
         }
     }
     return QLineEdit::nativeEvent(eventType, message, result);
+}
+
+void SearchBar::openSettingWindow()
+{
+    emit sg_openSettingWindow();
 }
 
 

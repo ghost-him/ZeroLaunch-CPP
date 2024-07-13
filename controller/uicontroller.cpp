@@ -17,6 +17,9 @@ UIController::UIController() {
     QObject::connect(&searchBar, &SearchBar::hideProgram, [this](){
         this->hide();
     });
+    QObject::connect(&searchBar, &SearchBar::sg_openSettingWindow, [this](){
+        this->openSettingWindow();
+    });
 
     // 初始化键盘钩子
     KeyboardHook& hook = KeyboardHook::getInstance();
@@ -98,6 +101,12 @@ void UIController::initProgramIcon()
 void UIController::clearIconCache()
 {
     iconCache.clear();
+}
+
+void UIController::openSettingWindow()
+{
+    SettingWindow& settingWindow = SettingWindow::getInstance();
+    settingWindow.show();
 }
 
 const QPixmap &UIController::getIcon(const std::wstring &iconPath, bool isUWPApp)

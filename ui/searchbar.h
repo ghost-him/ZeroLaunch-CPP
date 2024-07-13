@@ -29,6 +29,7 @@ public:
     void hide();
 
 signals:
+
     void selectForwardItem();
     void selectBackwardItem();
 
@@ -36,16 +37,21 @@ signals:
 
     void hideProgram();
 
+    void sg_openSettingWindow();
+
 private slots:
     void focusOnSearchBar();
 
 protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
     void keyPressEvent(QKeyEvent *event) override;
 
     bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) override;
 
 private:
+    void openSettingWindow();
+
     SearchBar();
 
     void pressESC();

@@ -23,6 +23,8 @@ public:
 
     void clearIconCache();
 
+    void openSettingWindow();
+
     const QPixmap& getIcon(const std::wstring& iconPath, bool isUWPApp);
 
     ~UIController() = default;
