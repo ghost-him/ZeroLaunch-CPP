@@ -14,7 +14,7 @@
 int main(int argc, char *argv[])
 {
     SingleApplication app(argc, argv);
-
+    
     if (app.isRunning()) {
         QMessageBox::warning(nullptr, "提示", "当前程序已在运行");
         return 0;

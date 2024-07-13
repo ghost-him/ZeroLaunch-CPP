@@ -37,10 +37,12 @@ SearchBar::SearchBar() {
 
 
     this->setGeometry(x_bias, desktop_height/ 4, x, y);
+    this->setFixedSize({x, y});
+    qDebug() << "searchBar: " << x << " " << y;
 
     // 更改字体的大小
     QFont font;
-    font.setPixelSize(20);
+    font.setPixelSize(y*0.45);
     this->setFont(font);
 
     // 更改字体的颜色

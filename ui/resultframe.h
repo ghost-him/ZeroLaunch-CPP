@@ -46,6 +46,8 @@ private:
     ResultFrame(QWidget *parent = nullptr);
     ~ResultFrame();
 
+    int itemHeight, itemWidth;
+
     Ui::ResultFrame *ui;
 };
 

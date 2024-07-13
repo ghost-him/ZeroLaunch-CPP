@@ -6,7 +6,7 @@
 #include "../controller/controller.h"
 #include "../controller/utils.h"
 #include <QScrollBar>
-#include <string>
+#include <QSize>
 
 ResultFrame::ResultFrame(QWidget *parent)
     : QWidget(parent)
@@ -38,6 +38,12 @@ ResultFrame::ResultFrame(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);
 
     this->setGeometry(x_bias, desktop_height/ 4 + y + y / 10, x, y * 4);
+    this->setFixedSize({x, y});
+
+    this->itemHeight = y;
+    this->itemWidth = x;
+
+    qDebug() << "resultframe: " << x << " " << y;
 
     QPalette palette = QApplication::palette();
     this->setStyleSheet(
@@ -109,14 +115,19 @@ void ResultFrame::addItem(const QPixmap &programIcon, const QString &programName
     QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
     ResultItem* content = new ResultItem(this);
 
-    content->setProgramName(programName);
-    content->setProgramIcon(programIcon);
+    content->setFixedSize({itemWidth, itemHeight});
 
     ui->listWidget->addItem(item);
     ui->listWidget->setItemWidget(item, content);
 
     QSize hint = content->sizeHint();
-    item->setSizeHint(QSize(width() - 20, hint.height()));
+    item->setSizeHint({width() - 20, hint.height()});
+
+
+    content->setProgramName(programName);
+    content->setProgramIcon(programIcon);
+
+
 }
 
 void ResultFrame::selectForwardItem()

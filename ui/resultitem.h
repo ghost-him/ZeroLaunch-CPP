@@ -18,6 +18,9 @@ public:
 
     void setProgramIcon(const QPixmap& pixmap);
     void setProgramName(const QString &name);
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 
 private:
     Ui::ResultItem *ui;
