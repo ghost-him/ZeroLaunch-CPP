@@ -41,6 +41,7 @@ void SettingWindow::show()
     QWidget::show();
     raise();
     activateWindow();
+    setFocus();
 }
 
 void SettingWindow::closeEvent(QCloseEvent *event)

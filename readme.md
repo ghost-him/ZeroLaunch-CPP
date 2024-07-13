@@ -19,13 +19,13 @@
 
 软件的运行界面：
 
-![image-20240707234443465](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/image-20240707234443465.png)
+![image-20240707234443465](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/program2.png)
 
-![image-20240707234510649](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/image-20240707234510649.png)
+![image-20240707234510649](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/program1.png)
 
 软件的设置界面：
 
-![image-20240707234524868](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/image-20240707234524868.png)
+![image-20240707234524868](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/setting.png)
 
 ## 快速使用
 
@@ -35,11 +35,14 @@
 
 * `Alt + space`：打开搜索栏
 * `Enter`：选择要启动的应用。
+* 直接点击搜索结果栏中显示的程序也可以启动程序。
 * 方向键上：选择上一个选项
 * 方向键下：选择下一个选择
 * `Ctrl + j`：等于方向键下
 * `Ctrl + k`：等于方向键上
 * `ESC`：当搜索栏中有文字时，则清屏；没有文字时，则隐藏搜索栏。
+
+在 设置窗口 设置结束后，需要点击 `确认` 按钮来保存并加载数据，直接关闭则不会对程序进行修改。
 
 **如果要删除软件，请先去程序的设置中将开机自启关闭！**
 
@@ -52,8 +55,9 @@
 ### 编译使用
 
 1. 克隆`github`项目。
-2. 使用`qt creator`打开该项目。
-3. 编译，编译后的程序存放在`${CMAKE_BINARY_DIR}/program`目录下。
+2. 下载`Windows Kits`开发库，并在`CMakeLists.txt`中修改对应的路径（如果是默认路径则无需修改）
+3. 使用`qt creator`打开该项目。
+4. 编译，编译后的程序存放在`${CMAKE_BINARY_DIR}/program`目录下。
 
 ## 软件特点
 
