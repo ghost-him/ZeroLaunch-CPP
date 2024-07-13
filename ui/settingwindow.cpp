@@ -12,6 +12,8 @@ SettingWindow::SettingWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("设置");
+    // 设置窗口无法更改大小
+    this->setFixedSize(this->size());
 
 }
 
@@ -36,7 +38,7 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
 
 void SettingWindow::closeEvent(QCloseEvent *event)
 {
-    on_btnConfirm_clicked();
+    this->hide();
     event->ignore();  // 忽略关闭事件
 }
 
