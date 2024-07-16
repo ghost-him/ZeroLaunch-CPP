@@ -219,16 +219,24 @@ void Controller::inputText(const QString &text)
 }
 void Controller::setAutoStart(bool isAutoStart)
 {
-    QString  strApplicationName = QApplication::applicationName();//获取应用名称
-    QSettings * settings = new QSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+    QString strApplicationName = QApplication::applicationName(); // 获取应用名称
+    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 
-    if(isAutoStart)
+    if (isAutoStart)
     {
-        QString strApplicationFilePath = QApplication::applicationFilePath();//获取应用的目录
-        settings->setValue(strApplicationName, strApplicationFilePath.replace("/", "\\"));//写入注册表
+        QString strApplicationFilePath = QApplication::applicationFilePath(); // 获取应用的目录
+        strApplicationFilePath.replace("/", "\\"); // 替换路径中的斜杠
+
+        // 检查是否已经存在相同的注册表项，避免重复添加
+        if (settings.value(strApplicationName).toString() != strApplicationFilePath)
+        {
+            settings.setValue(strApplicationName, strApplicationFilePath); // 写入注册表
+        }
     }
     else
-        settings->remove(strApplicationName);//移除注册表
+    {
+        settings.remove(strApplicationName); // 移除注册表
+    }
 }
 
 const QJsonObject &Controller::getConfigure()
