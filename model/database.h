@@ -60,8 +60,11 @@ public:
 
     void clearProgramInfo();
 
+    void addForbiddenName(const std::wstring& name);
+
 private:
     Database();
+    std::vector<std::wstring> forbiddenNames;
     std::vector<ProgramNode> programs;
     std::unordered_set<std::wstring> cache;
 
@@ -90,6 +93,7 @@ private:
 
     bool isNumericSequence(const std::wstring& s, size_t start, size_t length);
 
+    bool isValidName(const std::wstring& s);
 
 };
 

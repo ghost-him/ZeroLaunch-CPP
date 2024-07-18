@@ -34,6 +34,7 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->LEPlaceholderText->setText(config.searchBarPlaceholderText);
     ui->LEEmptyText->setText(config.resultFrameEmptyText);
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
+    ui->boxIgnoreUninstall->setChecked(config.isIgnoreUninstallApp);
 }
 
 void SettingWindow::show()
@@ -63,6 +64,7 @@ void SettingWindow::on_btnConfirm_clicked()
     configure.searchBarPlaceholderText = ui->LEPlaceholderText->text();
     configure.resultFrameEmptyText = ui->LEEmptyText->text();
     configure.isSearchUWP = ui->boxSearchUWP->isChecked();
+    configure.isIgnoreUninstallApp = ui->boxIgnoreUninstall->isChecked();
     // 保存文件
     emit confirmSetting(configure);
     hide();

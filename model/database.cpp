@@ -15,9 +15,14 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     std::wstring showName = programName.substr(0, t);
 
     std::wstring compareName = preprocess(showName);
-
     if (isExist(compareName))
         return ;
+
+    // 检测是否是有效的名字
+    if (!isValidName(compareName)) {
+        qDebug() << compareName << "++++++++++++++++++++++++++++++++++++++++++++";
+        return ;
+    }
 
     // 将中文转为拼音
     ChineseConvertPinyin& converter = ChineseConvertPinyin::getInstance();
@@ -300,6 +305,16 @@ bool Database::isNumericSequence(const std::wstring &s, size_t start, size_t len
     return hasDigit;  // 确保至少包含一个数字
 }
 
+bool Database::isValidName(const std::wstring &s)
+{
+    for (const auto& i : forbiddenNames) {
+        if (s.find(i) != std::wstring::npos) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 void Database::testCompareAlgorithm(std::wstring inputValue)
 {
@@ -322,4 +337,9 @@ void Database::clearProgramInfo()
 {
     programs.clear();
     cache.clear();
+}
+
+void Database::addForbiddenName(const std::wstring &name)
+{
+    forbiddenNames.push_back(name);
 }

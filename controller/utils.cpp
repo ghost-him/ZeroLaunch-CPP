@@ -40,6 +40,7 @@ QJsonObject getDefaultSettingJson()
     jsonObject["searchBarPlaceholderText"] = "Hello, ZeroLaunch!";
     jsonObject["resultFrameEmptyText"] = "当前搜索无结果";
     jsonObject["searchUWP"] = true;
+    jsonObject["isIgnoreUninstallApp"] = true;
 
     return jsonObject;
 }
@@ -86,6 +87,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     json["searchBarPlaceholderText"] = config.searchBarPlaceholderText;
     json["resultFrameEmptyText"] = config.resultFrameEmptyText;
     json["searchUWP"] = config.isSearchUWP;
+    json["isIgnoreUninstallApp"] = config.isIgnoreUninstallApp;
     return json;
 }
 
@@ -103,12 +105,13 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     ret.searchBarPlaceholderText = json["searchBarPlaceholderText"].toString();
     ret.resultFrameEmptyText = json["resultFrameEmptyText"].toString();
     ret.isSearchUWP = json["searchUWP"].toBool();
+    ret.isIgnoreUninstallApp = json["isIgnoreUninstallApp"].toBool();
     return ret;
 }
 
 QString getProgramVersion()
 {
-    return "ZeroLaunch 0.5";
+    return "ZeroLaunch 0.6";
 }
 
 QString getPinyinConfigPath()

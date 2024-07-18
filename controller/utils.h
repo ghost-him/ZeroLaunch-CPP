@@ -19,6 +19,7 @@ struct SettingWindowConfigure {
     QString searchBarPlaceholderText;
     QString resultFrameEmptyText;
     bool isSearchUWP;
+    bool isIgnoreUninstallApp;
 };
 
 

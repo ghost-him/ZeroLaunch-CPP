@@ -149,23 +149,29 @@ void Controller::init()
 
     init.initCustomPath();
 
-    if (configure["searchUWP"].toBool()) {
+    if (classConfig.isIgnoreUninstallApp) {
+        Database& db = Database::getInstance();
+        db.addForbiddenName(L"卸载");
+        db.addForbiddenName(L"uninstall");
+    }
+
+    if (classConfig.isSearchUWP) {
         init.initUWPProgram();
     }
-    if (configure["searchStartMenu"].toBool()) {
+    if (classConfig.isSearchStartMenu) {
         init.initProgramWithStartMenu();
     }
-    if (configure["searchRegistry"].toBool()) {
+    if (classConfig.isSearchRegistry) {
         init.initProgramWithRegistery();
     }
-    if (configure["searchProgramFile"].toBool()) {
+    if (classConfig.isSearchProgramFile) {
         init.initProgramWithProgramFileDir();
     }
-    if (configure["preLoadResource"].toBool()) {
+    if (classConfig.isPreLoadResource) {
         uiController.preLoadProgramIcon();
     }
 
-    setAutoStart(configure["isAutoStart"].toBool());
+    setAutoStart(classConfig.isAutoStart);
 
 }
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>673</width>
-    <height>440</height>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>651</width>
-     <height>371</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="widgetResizable">
@@ -31,7 +31,7 @@
       <x>0</x>
       <y>0</y>
       <width>649</width>
-      <height>369</height>
+      <height>389</height>
      </rect>
     </property>
     <widget class="QCheckBox" name="boxAutoStart">
@@ -137,8 +137,8 @@
     <widget class="QSpinBox" name="spResultItemNumber">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>250</y>
+       <x>20</x>
+       <y>260</y>
        <width>81</width>
        <height>21</height>
       </rect>
@@ -156,8 +156,8 @@
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>250</y>
+       <x>120</x>
+       <y>260</y>
        <width>131</width>
        <height>19</height>
       </rect>
@@ -202,7 +202,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>280</y>
+       <y>310</y>
        <width>421</width>
        <height>25</height>
       </rect>
@@ -212,7 +212,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>280</y>
+       <y>310</y>
        <width>171</width>
        <height>19</height>
       </rect>
@@ -225,7 +225,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>310</y>
+       <y>350</y>
        <width>421</width>
        <height>25</height>
       </rect>
@@ -235,7 +235,7 @@
      <property name="geometry">
       <rect>
        <x>440</x>
-       <y>310</y>
+       <y>350</y>
        <width>181</width>
        <height>19</height>
       </rect>
@@ -257,13 +257,26 @@
       <string>搜索UWP应用</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="boxIgnoreUninstall">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>10</y>
+       <width>121</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>忽略卸载程序</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QPushButton" name="btnConfirm">
    <property name="geometry">
     <rect>
      <x>550</x>
-     <y>400</y>
+     <y>420</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -276,7 +289,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>400</y>
+     <y>420</y>
      <width>501</width>
      <height>25</height>
     </rect>

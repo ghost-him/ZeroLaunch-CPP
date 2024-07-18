@@ -31,8 +31,7 @@ public:
 
     void initCustomPath();
 
-    void clearStore();
-
+    void clearStore(); 
 private:
     InitProgram();
     // path:遍历的目录， fulldirectory：是否要遍历子目录，level_bias：遍历出来后，要添加的等级的偏移
@@ -55,6 +54,8 @@ private:
     bool starts_with_directory(const fs::directory_entry& entry, const std::wstring& dir);
 
     std::vector<std::wstring> bannedPath;
+
+    std::vector<std::wstring> forbiddenNames;
 };
 
 #endif // INITPROGRAM_H
