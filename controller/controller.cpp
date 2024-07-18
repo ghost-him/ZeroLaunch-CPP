@@ -213,7 +213,7 @@ void Controller::inputText(const QString &text)
 {
     if (!text.isEmpty()) {
         Database& db = Database::getInstance();
-        db.updateProgramInfo(text.toStdWString());
+        db.updateScores(text.toStdWString());
     }
     uiController.updateResultFrame(text.isEmpty());
 }

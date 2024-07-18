@@ -177,7 +177,7 @@ void UIController::updateResultFrame(bool isEmptyText)
     const std::vector<ProgramNode>& programs = db.getProgramsFile();
     for (int i = 0; i < resultItemNumber && i < programs.size(); i ++) {
         auto& programItem = programs[i];
-        const std::wstring& programName = programItem.programName;
+        const std::wstring& programName = programItem.showName;
         const std::wstring& iconPath = programItem.iconPath;
 
         const QPixmap& programIcon = getIcon(iconPath, programItem.isUWPApp);

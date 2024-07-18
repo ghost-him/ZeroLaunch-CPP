@@ -6,24 +6,25 @@
 #include <unordered_set>
 
 struct ProgramNode {
-    std::wstring programName;
+    std::wstring showName;
 
     std::wstring compareName;
-    std::wstring pinyinName;
-    std::wstring firstLatterName;
+    std::vector<std::wstring> nameParts;
 
     std::wstring programPath;
     std::wstring iconPath;
 
-    double programLevel;
-    int stableLevel;
+    double compatibility;
+    int stableBias;
     int launchTime;
 
     bool isUWPApp;
 
+    int pinyinLength;
+
     const bool operator<(const ProgramNode& other) const {
-        if (programLevel != other.programLevel) {
-            return programLevel < other.programLevel;
+        if (compatibility != other.compatibility) {
+            return compatibility < other.compatibility;
         } else if (launchTime != other.launchTime) {
             return launchTime > other.launchTime;
         } else {
@@ -47,7 +48,7 @@ public:
 
     void insertProgramInfo(const std::wstring& programName, const std::wstring& programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp);
 
-    void updateProgramInfo(const std::wstring& inputValue);
+    void updateScores(const std::wstring& inputName);
 
     const std::vector<ProgramNode>& getProgramsFile();
 
@@ -64,18 +65,31 @@ private:
     std::vector<ProgramNode> programs;
     std::unordered_set<std::wstring> cache;
 
-    double computeCombinedValue(const std::wstring& storeName, const std::wstring& inputName);
-
-    double LCS(const std::wstring& compareName, const std::wstring& inputValue);
-    double LCS_MAX(const std::wstring& compareName, const std::wstring& inputValue);
-    double editSubstrDistance(const std::wstring& compareName, const std::wstring& inputValue);
-    double editDistance(const std::wstring& compareName, const std::wstring& inputValue);
-    double kmp(const std::wstring& compareName, const std::wstring& inputValue);
-
     std::wstring& tolower(std::wstring& other);
     std::wstring preprocess(const std::wstring& inputText);
 
-    std::wstring simplifiedPinyin(const std::wstring& input);
+    std::vector<std::wstring> splitStringBySpace(const std::wstring& str);
+
+    std::vector<std::vector<std::wstring>> splitString(const std::wstring& s);
+    // 辅助函数：按大小写分割
+    std::vector<std::wstring> splitStringByCamelCase(const std::wstring& s);
+
+    void calculateCompareName(ProgramNode& app, std::wstring inputName);
+
+    void calculateNameParts(ProgramNode& app, const std::vector<std::vector<std::wstring>>& splits, double alpha);
+
+    double calculateScore(const std::wstring& inputPart, const std::wstring& targetPart);
+
+    double calculateWeight(double inputLen);
+
+    double calculatePenalty(double x);
+
+    double calculateEditDistance(const std::wstring& compareName, const std::wstring& inputValue);
+
+    void debugProgramNode();
+
+    bool isNumericSequence(const std::wstring& s, size_t start, size_t length);
+
 
 };
 

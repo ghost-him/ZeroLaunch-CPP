@@ -46,9 +46,18 @@ std::wstring ChineseConvertPinyin::getPinyin(const std::wstring &chineseName)
         if (converter.contains(i)) {
             ret.append(converter[i]);
             ret.push_back(L' ');
+        } else {
+            ret.push_back(i);
+            if (!isAsciiChar(i)) {
+                ret.push_back(L' ');
+            }
         }
     }
-    if (ret.size())
-        ret.pop_back();
+    while((*ret.rbegin()) == L' ') ret.pop_back();
     return ret;
+}
+
+bool ChineseConvertPinyin::isAsciiChar(wchar_t c)
+{
+    return c <= 0x7F;
 }

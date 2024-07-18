@@ -9,22 +9,12 @@ Database::Database() {}
 #undef min
 #undef max
 
-double Database::computeCombinedValue(const std::wstring &storeName, const std::wstring &inputName)
-{
-    double editValue = editSubstrDistance(storeName, inputName);
-    double kmpValue = kmp(storeName, inputName);
-    double lcsValue = LCS(storeName, inputName);
-
-    return editValue + kmpValue + lcsValue * 0.2;
-}
-
 void Database::insertProgramInfo(const std::wstring &programName, const std::wstring &programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp)
 {
     int t = programName.find_last_of(L".");
     std::wstring showName = programName.substr(0, t);
 
     std::wstring compareName = preprocess(showName);
-    tolower(compareName);
 
     if (isExist(compareName))
         return ;
@@ -32,34 +22,51 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     // 将中文转为拼音
     ChineseConvertPinyin& converter = ChineseConvertPinyin::getInstance();
     std::wstring pinyin = converter.getPinyin(compareName);
-    std::wstring firstLatterName = simplifiedPinyin(pinyin);
 
-    programs.emplace_back(showName, compareName, pinyin, firstLatterName, programPath, iconPath, 0, stableLevel, 0, isUWPApp);
-}
-
-void Database::updateProgramInfo(const std::wstring &inputValue)
-{
-    for (auto & i : programs) {
-        const std::wstring& compareName = i.compareName;
-        const std::wstring& pinyinName = i.pinyinName;
-        const std::wstring& firstLatterName = i.firstLatterName;
-        // 如果输入的长度已经大于其本身的长度了，则一定不是该软件
-        if (inputValue.size() > std::max(compareName.size(), pinyinName.size())) {
-            i.programLevel = 50000;
-            continue;
-        }
-        std::wstring compareKey = inputValue;
-        tolower(compareKey);
-
-        double directValue = computeCombinedValue(compareName, compareKey);
-        double pinyinValue = computeCombinedValue(pinyinName, compareKey);
-        double firstLatterValue = computeCombinedValue(firstLatterName, compareKey);
-
-        i.programLevel = std::min({directValue, pinyinValue, firstLatterValue}) + i.stableLevel;
-
+    if (pinyin.empty()) {
+        pinyin = compareName;
     }
 
+    std::vector<std::wstring> nameParts = splitStringBySpace(pinyin);
+    int pinyinLength = 0;
+    for (auto &i : nameParts) {
+        pinyinLength += i.size();
+    }
+
+    ProgramNode app {
+        .showName = programName,
+        .compareName = compareName,
+        .nameParts = nameParts,
+        .programPath = programPath,
+        .iconPath = iconPath,
+        .compatibility = 0,
+        .stableBias = stableLevel,
+        .launchTime = 0,
+        .isUWPApp = isUWPApp,
+        .pinyinLength = pinyinLength,
+    };
+
+    programs.emplace_back(app);
+}
+
+void Database::updateScores(const std::wstring &inputName)
+{
+    qDebug() << "update score name: " << inputName;
+
+    auto splits = splitString(inputName);
+    for (auto& app : programs) {
+        app.compatibility = -10000;
+        // 计算分割形式的匹配度
+        calculateNameParts(app, splits, 0.8);
+        // 计算整体形式的匹配度
+        calculateCompareName(app, inputName);
+    }
+
+
     std::sort(programs.begin(), programs.end());
+    std::reverse(programs.begin(), programs.end());
+    debugProgramNode();
+
 }
 
 const std::vector<ProgramNode>& Database::getProgramsFile()
@@ -72,143 +79,6 @@ bool Database::isExist(const std::wstring &key)
     if (cache.contains(key)) return true;
     cache.insert(key);
     return false;
-}
-
-double Database::LCS(const std::wstring &compareName, const std::wstring &inputValue)
-{
-    int m = compareName.size();
-    int n = inputValue.size();
-
-    // 使用两个一维数组来代替二维数组
-    std::vector<int> previous(n + 1, 0);
-    std::vector<int> current(n + 1, 0);
-
-    for (int i = 1; i <= m; ++i) {
-        for (int j = 1; j <= n; ++j) {
-            if (compareName[i - 1] == inputValue[j - 1]) {
-                current[j] = previous[j - 1] + 1;
-            } else {
-                current[j] = std::max(previous[j], current[j - 1]);
-            }
-        }
-        // 将当前行复制到前一行，以便下一次迭代使用
-        std::swap(previous, current);
-    }
-
-    return (m + n - 2 * previous[n]);
-}
-
-double Database::LCS_MAX(const std::wstring &compareName, const std::wstring &compareKey)
-{
-
-    int res = 0;
-    int n = compareName.size();
-    int m = compareKey.size();
-    std::vector<int> prev(m + 1, 0), curr(m + 1, 0);
-
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            if (compareName[i - 1] == compareKey[j - 1]) {
-                curr[j] = prev[j - 1] + 1;
-            } else {
-                curr[j] = 0;
-            }
-            if (curr[j] > res) {
-                res = curr[j];
-            }
-        }
-        std::swap(prev, curr);
-        std::fill(curr.begin(), curr.end(), 0);
-    }
-
-    return res;
-}
-
-
-double Database::editSubstrDistance(const std::wstring& compareName, const std::wstring& inputValue) {
-    int m = compareName.size();
-    int n = inputValue.size();
-    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, 0));
-
-    // Initialize the dp array
-    for (int i = 0; i <= m; ++i) {
-        dp[i][0] = 0;  // No operation needed to match an empty substring
-    }
-    for (int j = 1; j <= n; ++j) {
-        dp[0][j] = j;  // Need j operations to delete all characters in b
-    }
-
-    // Fill the dp array
-    for (int i = 1; i <= m; ++i) {
-        for (int j = 1; j <= n; ++j) {
-            if (compareName[i - 1] == inputValue[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1];
-            }
-            else {
-                dp[i][j] = std::min({ dp[i - 1][j - 1] + 1,  // Replace
-                                     dp[i][j - 1] + 1,      // Insert
-                                     dp[i - 1][j] + 1 });    // Delete
-            }
-        }
-    }
-
-    // Find the minimum value in the last column
-    double min_operations = dp[m][n];
-    for (int i = n; i <= m; ++i) {
-        min_operations = std::min(min_operations, (double)dp[i][n]);
-    }
-
-    min_operations /= inputValue.size();
-    return pow(3, 3 * min_operations - 2) * 25;
-}
-
-
-double Database::editDistance(const std::wstring& compareName, const std::wstring& inputValue) {
-
-    int n = compareName.size();
-    int m = inputValue.size();
-
-    // Ensure b is the shorter string to minimize space usage
-    if (n < m) {
-        return editDistance(inputValue, compareName);
-    }
-
-    std::vector<int> dp(m + 1);
-    std::vector<int> temp(m + 1);
-
-    for (int j = 0; j <= m; j++) {
-        dp[j] = j;
-    }
-
-    for (int i = 1; i <= n; i++) {
-        temp[0] = i;
-        for (int j = 1; j <= m; j++) {
-            if (compareName[i - 1] == inputValue[j - 1]) {
-                temp[j] = dp[j - 1];
-            } else {
-                temp[j] = std::min({dp[j - 1] + 1, dp[j] + 1, temp[j - 1] + 1});
-            }
-        }
-        dp.swap(temp);
-    }
-
-    return dp[m];
-}
-
-double Database::kmp(const std::wstring &compareName, const std::wstring &inputValue)
-{
-    int kmpValue = 0;
-    auto it = compareName.find(inputValue);
-    if (it != std::wstring::npos) {
-        kmpValue += inputValue.size();
-    } else {
-        return 0;
-    }
-
-    if (compareName.starts_with(inputValue)) {
-        kmpValue += inputValue.size();
-    }
-    return -kmpValue;
 }
 
 
@@ -225,6 +95,7 @@ std::wstring& Database::tolower(std::wstring &other)
 std::wstring Database::preprocess(const std::wstring &inputText)
 {
     std::wstring ret;
+    /*
     int s = 0;
     for (auto& i : inputText) {
         if (i == L'(') {
@@ -235,25 +106,200 @@ std::wstring Database::preprocess(const std::wstring &inputText)
             ret.push_back(i);
         }
     }
+*/
+    ret = inputText;
+    tolower(ret);
     return ret;
 }
 
-std::wstring Database::simplifiedPinyin(const std::wstring& input)
+std::vector<std::wstring> Database::splitStringBySpace(const std::wstring &str)
 {
-    std::wstring ret;
-    bool inWord = false;
-    for (const auto& i : input) {
-        if (i != L' ') {
-            if (!inWord)
-                ret.push_back(i);
-            inWord = true;
-            continue;
-        } else {
-            inWord = false;
+    std::vector<std::wstring> result;
+    std::wistringstream iss(str);
+    std::wstring word;
+    while (iss >> word) result.push_back(word);
+    return result;
+}
+
+std::vector<std::vector<std::wstring> > Database::splitString(const std::wstring &s)
+{
+    std::vector<std::vector<std::wstring>> result;
+    int maxSplits = std::min(5, static_cast<int>(std::sqrt(s.length())));
+
+    // 1. 按空格分割
+    result.push_back(splitStringBySpace(s));
+
+    // 2. 按大小写分割
+    result.push_back(splitStringByCamelCase(s));
+
+    // 3. 滑动窗口分割
+    for (int windowSize = 1; windowSize <= maxSplits; ++windowSize) {
+        std::vector<std::wstring> split;
+        for (int i = 0; i < s.length();) {
+            if (isNumericSequence(s, i, windowSize)) {
+                // 找到数字序列的结束位置
+                int end = i;
+                while (end < s.length() && (std::iswdigit(s[end]) || s[end] == L'.')) {
+                    ++end;
+                }
+                split.push_back(s.substr(i, end - i));
+                i = end;
+            } else {
+                split.push_back(s.substr(i, windowSize));
+                i += windowSize;
+            }
+        }
+        result.push_back(split);
+    }
+
+    // 4. 从左到右逐步分割
+    std::vector<std::wstring> leftToRight;
+    for (int i = 1; i <= s.length(); ++i) {
+        if (i == 1 || !isNumericSequence(s, 0, i)) {
+            leftToRight.push_back(s.substr(0, i));
+            if (leftToRight.size() >= maxSplits) break;
         }
     }
-    return ret;
+    result.push_back(leftToRight);
+
+    // 5. 从右到左逐步分割
+    std::vector<std::wstring> rightToLeft;
+    for (int i = s.length(); i > 0; --i) {
+        if (i == s.length() || !isNumericSequence(s, i - 1, s.length() - i + 1)) {
+            rightToLeft.insert(rightToLeft.begin(), s.substr(i - 1));
+            if (rightToLeft.size() >= maxSplits) break;
+        }
+    }
+    result.push_back(rightToLeft);
+
+    return result;
 }
+
+std::vector<std::wstring> Database::splitStringByCamelCase(const std::wstring &s)
+{
+    std::vector<std::wstring> result;
+    std::wstring current;
+    for (wchar_t c : s) {
+        if (std::isupper(c) && !current.empty()) {
+            result.push_back(current);
+            current.clear();
+        }
+        current += c;
+    }
+    if (!current.empty()) {
+        result.push_back(current);
+    }
+    return result;
+}
+
+void Database::calculateCompareName(ProgramNode &app, std::wstring inputName)
+{
+    double score = calculateEditDistance(app.compareName, inputName);
+    app.compatibility = std::max(app.compatibility, score);
+}
+
+void Database::calculateNameParts(ProgramNode &app, const std::vector<std::vector<std::wstring> > &splits, double alpha)
+{
+
+    // 分割形式的匹配度计算
+    for (const auto& split : splits) {
+        double score = 0.0;
+        int n = std::min(split.size(), app.nameParts.size());
+        for (int i = 0; i < n; ++i) {
+            score += calculateScore(split[i], app.nameParts[i]) * std::pow(alpha, i);
+        }
+        score *= calculatePenalty(app.nameParts.size());
+        app.compatibility = std::max(score, app.compatibility);
+    }
+}
+
+double Database::calculateScore(const std::wstring &inputPart, const std::wstring &targetPart)
+{
+    double k = calculateWeight(inputPart.size());
+    if (inputPart == targetPart) return 3 * k;
+    if (targetPart.starts_with(inputPart)) return 2 * k;
+    if (targetPart.find(inputPart) != std::wstring::npos) return k;
+    return calculateEditDistance(targetPart, inputPart);
+}
+
+double Database::calculateWeight(double inputLen)
+{
+    return 3 * std::log2(inputLen + 1);
+}
+
+double Database::calculatePenalty(double x)
+{
+    return 1 / (1 + std::log2(2 * (x + 1))) + 0.5;
+}
+
+double Database::calculateEditDistance(const std::wstring &compareName, const std::wstring &inputValue)
+{
+    int m = compareName.size();
+    int n = inputValue.size();
+    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, 0));
+
+    for (int i = 0; i <= m; ++i) {
+        dp[i][0] = 0;  // No operation needed to match an empty substring
+    }
+    for (int j = 1; j <= n; ++j) {
+        dp[0][j] = j;  // Need j operations to delete all characters in b
+    }
+
+    // Fill the dp array
+    for (int i = 1; i <= m; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            if (compareName[i - 1] == inputValue[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            }
+            else {
+                dp[i][j] = std::min({ dp[i - 1][j - 1] + 1,  // Replace
+                                     dp[i - 1][j] + 1 });    // Delete
+            }
+        }
+    }
+
+    // Find the minimum value in the last column
+    double min_operations = dp[m][n];
+    for (int i = n; i <= m; ++i) {
+        min_operations = std::min(min_operations, (double)dp[i][n]);
+    }
+
+    double value = 1 - min_operations / inputValue.size();
+    return calculateWeight(inputValue.size()) * std::exp(3 * value - 2);
+}
+
+void Database::debugProgramNode()
+{
+    qDebug() << R"(
+########################################################################
+########################################################################)";
+
+    for (auto & i : programs) {
+        qDebug() << "------------------------------------------------------";
+        qDebug() << i.showName << " " << i.compatibility;
+        QString str;
+        for (auto &j : i.nameParts) {
+            str += j;
+            str += " ";
+        }
+        qDebug() << str;
+
+    }
+}
+
+bool Database::isNumericSequence(const std::wstring &s, size_t start, size_t length)
+{
+    bool hasDigit = false;
+    for (size_t i = start; i < start + length && i < s.length(); ++i) {
+        if (std::iswdigit(s[i])) {
+            hasDigit = true;
+        } else if (s[i] != L'.') {
+            return false;  // 非数字且非小数点
+        }
+    }
+    return hasDigit;  // 确保至少包含一个数字
+}
+
 
 void Database::testCompareAlgorithm(std::wstring inputValue)
 {
@@ -261,35 +307,9 @@ void Database::testCompareAlgorithm(std::wstring inputValue)
     QString header = QString("%1 | %2 | %3 | %4 | %5")
                          .arg(QString("名称").leftJustified(60), "总分", "编辑距离", "kmp值", "固定值");
     qDebug() << header;
+    updateScores(inputValue);
 
-
-    for (auto & i : programs) {
-        const std::wstring& compareName = i.compareName;
-        // 如果输入的长度已经大于其本身的长度了，则一定不是该软件
-        if (inputValue.size() > compareName.size()) {
-            i.programLevel = 50000;
-            continue;
-        }
-
-
-        std::wstring compareKey = inputValue;
-        tolower(compareKey);
-
-        double editValue = editSubstrDistance(compareName, compareKey);
-        double kmpValue = kmp(compareName, compareKey);
-
-        i.programLevel = editValue + kmpValue + i.stableLevel;
-
-        QString header = QString("%1 | %2 | %3 | %4 | %5")
-                             .arg(QString::fromStdWString(i.programName).leftJustified(60),
-                                  QString::fromStdWString(std::to_wstring(i.programLevel)),
-                                  QString::fromStdWString(std::to_wstring(editValue)),
-                                  QString::fromStdWString(std::to_wstring(kmpValue)),
-                                  QString::fromStdWString(std::to_wstring(i.stableLevel)));
-        qDebug() << header;
-
-
-    }
+    debugProgramNode();
 
 }
 

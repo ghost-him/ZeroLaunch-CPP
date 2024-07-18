@@ -20,7 +20,7 @@ ResultItem::~ResultItem()
 void ResultItem::setProgramIcon(const QPixmap& pixmap)
 {
     QSize labelSize = ui->programIcon->size();
-    qDebug() << "label size: "<<labelSize;
+    //qDebug() << "label size: "<<labelSize;
     // QMargins margins = ui->programIcon->contentsMargins();
     // QSize availableSize(labelSize.width() - margins.left() - margins.right(),
     //                     labelSize.height() - margins.top() - margins.bottom());
@@ -38,7 +38,7 @@ void ResultItem::resizeEvent(QResizeEvent *event)
 {
 
     int height{event->size().height()};
-    qDebug() << "change size, height: " << height;
+    //qDebug() << "change size, height: " << height;
     ui->programIcon->setFixedSize({height, height});
     int margin = height / 20; // 边距大小为3
     ui->programIcon->setContentsMargins(0, margin, 0, margin);
