@@ -101,7 +101,18 @@ std::wstring& Database::tolower(std::wstring &other)
 std::wstring Database::preprocess(const std::wstring &inputText)
 {
     std::wstring ret;
-    ret = inputText;
+
+    int s = 0;
+    for (auto& i : inputText) {
+        if (i == L'(') {
+            s ++;
+        } else if (i == L')') {
+            s --;
+        } else if (s == 0){
+            ret.push_back(i);
+        }
+    }
+
     tolower(ret);
     return ret;
 }
