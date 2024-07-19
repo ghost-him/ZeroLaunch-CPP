@@ -61,6 +61,9 @@ void Database::updateScores(const std::wstring &inputName)
     auto splits = splitString(inputName);
     for (auto& app : programs) {
         app.compatibility = -10000;
+        if (inputName.size() > std::max(app.pinyinLength, (int)app.compareName.size())) {
+            continue;
+        }
         // 计算分割形式的匹配度
         calculateNameParts(app, splits);
         // 计算整体形式的匹配度
@@ -101,16 +104,46 @@ std::wstring& Database::tolower(std::wstring &other)
 std::wstring Database::preprocess(const std::wstring &inputText)
 {
     std::wstring ret;
-
     int s = 0;
-    for (auto& i : inputText) {
-        if (i == L'(') {
-            s ++;
-        } else if (i == L')') {
-            s --;
-        } else if (s == 0){
-            ret.push_back(i);
+    bool inVersion = false;
+
+    for (size_t i = 0; i < inputText.size(); ++i) {
+        wchar_t ch = inputText[i];
+
+        // Handle parentheses
+        if (ch == L'(') {
+            s++;
+            inVersion = true;  // Assume version info starts after '('
         }
+        else if (ch == L')') {
+            s--;
+            inVersion = false;  // Assume version info ends at ')'
+        }
+        else if (s == 0 && !inVersion) {
+            // Check if the current character is part of a version number
+            if (std::iswdigit(ch) || ch == L'.') {
+                // Check if the previous character is a space (to identify version numbers correctly)
+                if (i > 0 && inputText[i - 1] == L' ') {
+                    // Skip the entire version number
+                    while (i < inputText.size() && (std::iswdigit(inputText[i]) || inputText[i] == L'.')) {
+                        i++;
+                    }
+                    // Skip any trailing spaces
+                    while (i < inputText.size() && inputText[i] == L' ') {
+                        i++;
+                    }
+                    // Decrement i to counter the next iteration's increment
+                    i--;
+                    continue;
+                }
+            }
+            ret.push_back(ch);
+        }
+    }
+
+    // 去除结尾的空格
+    while(ret.size() && (*ret.rbegin()) == L' ') {
+        ret.pop_back();
     }
 
     tolower(ret);
@@ -140,19 +173,8 @@ std::vector<std::vector<std::wstring> > Database::splitString(const std::wstring
     // 3. 滑动窗口分割
     for (int windowSize = 1; windowSize <= maxSplits; ++windowSize) {
         std::vector<std::wstring> split;
-        for (int i = 0; i < s.length();) {
-            if (isNumericSequence(s, i, windowSize)) {
-                // 找到数字序列的结束位置
-                int end = i;
-                while (end < s.length() && (std::iswdigit(s[end]) || s[end] == L'.')) {
-                    ++end;
-                }
-                split.push_back(s.substr(i, end - i));
-                i = end;
-            } else {
-                split.push_back(s.substr(i, windowSize));
-                i += windowSize;
-            }
+        for (int i = 0; i < s.length(); i += windowSize) {
+            split.push_back(s.substr(i, windowSize));
         }
         result.push_back(split);
     }
@@ -160,20 +182,16 @@ std::vector<std::vector<std::wstring> > Database::splitString(const std::wstring
     // 4. 从左到右逐步分割
     std::vector<std::wstring> leftToRight;
     for (int i = 1; i <= s.length(); ++i) {
-        if (i == 1 || !isNumericSequence(s, 0, i)) {
-            leftToRight.push_back(s.substr(0, i));
-            if (leftToRight.size() >= maxSplits) break;
-        }
+        leftToRight.push_back(s.substr(0, i));
+        if (leftToRight.size() >= maxSplits) break;
     }
     result.push_back(leftToRight);
 
     // 5. 从右到左逐步分割
     std::vector<std::wstring> rightToLeft;
     for (int i = s.length(); i > 0; --i) {
-        if (i == s.length() || !isNumericSequence(s, i - 1, s.length() - i + 1)) {
-            rightToLeft.insert(rightToLeft.begin(), s.substr(i - 1));
-            if (rightToLeft.size() >= maxSplits) break;
-        }
+        rightToLeft.insert(rightToLeft.begin(), s.substr(i - 1));
+        if (rightToLeft.size() >= maxSplits) break;
     }
     result.push_back(rightToLeft);
 
@@ -289,19 +307,6 @@ void Database::debugProgramNode()
         qDebug() << str;
 
     }
-}
-
-bool Database::isNumericSequence(const std::wstring &s, size_t start, size_t length)
-{
-    bool hasDigit = false;
-    for (size_t i = start; i < start + length && i < s.length(); ++i) {
-        if (std::iswdigit(s[i])) {
-            hasDigit = true;
-        } else if (s[i] != L'.') {
-            return false;  // 非数字且非小数点
-        }
-    }
-    return hasDigit;  // 确保至少包含一个数字
 }
 
 bool Database::isValidName(const std::wstring &s)

@@ -91,8 +91,6 @@ private:
 
     void debugProgramNode();
 
-    bool isNumericSequence(const std::wstring& s, size_t start, size_t length);
-
     bool isValidName(const std::wstring& s);
 
 };
