@@ -20,7 +20,7 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
 
     // 检测是否是有效的名字
     if (!isValidName(compareName)) {
-        qDebug() << compareName << "++++++++++++++++++++++++++++++++++++++++++++";
+        // qDebug() << compareName << "++++++++++++++++++++++++++++++++++++++++++++";
         return ;
     }
 
@@ -39,7 +39,7 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     }
 
     ProgramNode app {
-        .showName = programName,
+        .showName = showName,
         .compareName = compareName,
         .nameParts = nameParts,
         .programPath = programPath,
@@ -56,21 +56,22 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
 
 void Database::updateScores(const std::wstring &inputName)
 {
-    qDebug() << "update score name: " << inputName;
+    //qDebug() << "update score name: " << inputName;
 
     auto splits = splitString(inputName);
     for (auto& app : programs) {
         app.compatibility = -10000;
         // 计算分割形式的匹配度
-        calculateNameParts(app, splits, 0.8);
+        calculateNameParts(app, splits);
         // 计算整体形式的匹配度
         calculateCompareName(app, inputName);
+        app.compatibility += app.stableBias;
     }
 
 
     std::sort(programs.begin(), programs.end());
     std::reverse(programs.begin(), programs.end());
-    debugProgramNode();
+    // debugProgramNode();
 
 }
 
@@ -100,18 +101,6 @@ std::wstring& Database::tolower(std::wstring &other)
 std::wstring Database::preprocess(const std::wstring &inputText)
 {
     std::wstring ret;
-    /*
-    int s = 0;
-    for (auto& i : inputText) {
-        if (i == L'(') {
-            s ++;
-        } else if (i == L')') {
-            s --;
-        } else if (s == 0){
-            ret.push_back(i);
-        }
-    }
-*/
     ret = inputText;
     tolower(ret);
     return ret;
@@ -200,10 +189,11 @@ std::vector<std::wstring> Database::splitStringByCamelCase(const std::wstring &s
 void Database::calculateCompareName(ProgramNode &app, std::wstring inputName)
 {
     double score = calculateEditDistance(app.compareName, inputName);
+    score = score * calculateWeight((double) inputName.size() / app.compareName.size());
     app.compatibility = std::max(app.compatibility, score);
 }
 
-void Database::calculateNameParts(ProgramNode &app, const std::vector<std::vector<std::wstring> > &splits, double alpha)
+void Database::calculateNameParts(ProgramNode &app, const std::vector<std::vector<std::wstring> > &splits)
 {
 
     // 分割形式的匹配度计算
@@ -211,7 +201,7 @@ void Database::calculateNameParts(ProgramNode &app, const std::vector<std::vecto
         double score = 0.0;
         int n = std::min(split.size(), app.nameParts.size());
         for (int i = 0; i < n; ++i) {
-            score += calculateScore(split[i], app.nameParts[i]) * std::pow(alpha, i);
+            score += calculateScore(split[i], app.nameParts[i]);
         }
         score *= calculatePenalty(app.nameParts.size());
         app.compatibility = std::max(score, app.compatibility);
@@ -234,7 +224,7 @@ double Database::calculateWeight(double inputLen)
 
 double Database::calculatePenalty(double x)
 {
-    return 1 / (1 + std::log2(2 * (x + 1))) + 0.5;
+    return 1 / (x + std::log2(2 * (x + 1))) + 0.5;
 }
 
 double Database::calculateEditDistance(const std::wstring &compareName, const std::wstring &inputValue)
@@ -244,10 +234,10 @@ double Database::calculateEditDistance(const std::wstring &compareName, const st
     std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, 0));
 
     for (int i = 0; i <= m; ++i) {
-        dp[i][0] = 0;  // No operation needed to match an empty substring
+        dp[i][0] = 0;
     }
     for (int j = 1; j <= n; ++j) {
-        dp[0][j] = j;  // Need j operations to delete all characters in b
+        dp[0][j] = j;
     }
 
     // Fill the dp array
@@ -257,13 +247,12 @@ double Database::calculateEditDistance(const std::wstring &compareName, const st
                 dp[i][j] = dp[i - 1][j - 1];
             }
             else {
-                dp[i][j] = std::min({ dp[i - 1][j - 1] + 1,  // Replace
-                                     dp[i - 1][j] + 1 });    // Delete
+                dp[i][j] = std::min({ dp[i - 1][j - 1] + 1,
+                                     dp[i - 1][j] + 1 });
             }
         }
     }
 
-    // Find the minimum value in the last column
     double min_operations = dp[m][n];
     for (int i = n; i <= m; ++i) {
         min_operations = std::min(min_operations, (double)dp[i][n]);
@@ -278,7 +267,6 @@ void Database::debugProgramNode()
     qDebug() << R"(
 ########################################################################
 ########################################################################)";
-
     for (auto & i : programs) {
         qDebug() << "------------------------------------------------------";
         qDebug() << i.showName << " " << i.compatibility;

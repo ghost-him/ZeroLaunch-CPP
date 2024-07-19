@@ -79,7 +79,7 @@ private:
 
     void calculateCompareName(ProgramNode& app, std::wstring inputName);
 
-    void calculateNameParts(ProgramNode& app, const std::vector<std::vector<std::wstring>>& splits, double alpha);
+    void calculateNameParts(ProgramNode& app, const std::vector<std::vector<std::wstring>>& splits);
 
     double calculateScore(const std::wstring& inputPart, const std::wstring& targetPart);
 
