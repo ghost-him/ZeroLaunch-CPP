@@ -5,5 +5,6 @@
         <file>icon/tips.svg</file>
         <file>icon/trayIcon.svg</file>
         <file>icon/refresh.svg</file>
+        <file>icon/help.svg</file>
     </qresource>
 </RCC>

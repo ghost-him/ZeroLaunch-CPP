@@ -20,13 +20,10 @@ public:
 
     std::wstring getPinyin(const std::wstring& chineseName);
 
-
-
     bool isChineseCharacter(wchar_t c);
 
 private:
     bool isAsciiChar(wchar_t c);
-    bool isChineseOrEnglish(wchar_t c);
 
     ChineseConvertPinyin();
     std::unordered_map<wchar_t, std::wstring> converter;
