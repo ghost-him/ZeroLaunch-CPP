@@ -26,52 +26,47 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
 
     // 将中文转为拼音
     ChineseConvertPinyin& converter = ChineseConvertPinyin::getInstance();
-    std::wstring pinyin = converter.getPinyin(compareName);
+    std::wstring splitString = converter.getPinyin(compareName);
 
-    if (pinyin.empty()) {
-        pinyin = compareName;
+    if (splitString.empty()) {
+        splitString = compareName;
     }
 
-    std::vector<std::wstring> nameParts = splitStringBySpace(pinyin);
-    int pinyinLength = 0;
-    for (auto &i : nameParts) {
-        pinyinLength += i.size();
-    }
+    std::wstring firstLatterName = extractInitials(splitString);
+    std::wstring pinyin = removeStringSpace(splitString);
+
+    std::vector<std::wstring> compareNames{
+        compareName,
+        pinyin,
+        firstLatterName,
+    };
+
+    size_t maxNameLength = std::max({compareName.size(), pinyin.size(), firstLatterName.size()});
 
     ProgramNode app {
         .showName = showName,
-        .compareName = compareName,
-        .nameParts = nameParts,
+        .compareNames = compareNames,
         .programPath = programPath,
         .iconPath = iconPath,
         .compatibility = 0,
         .stableBias = stableLevel,
         .launchTime = 0,
         .isUWPApp = isUWPApp,
-        .pinyinLength = pinyinLength,
+        .maxNameLength = maxNameLength,
     };
 
     programs.emplace_back(app);
 }
 
-void Database::updateScores(const std::wstring &inputName)
+void Database::updateScores(std::wstring inputName)
 {
     //qDebug() << "update score name: " << inputName;
-
-    auto splits = splitString(inputName);
+    tolower(inputName);
     for (auto& app : programs) {
-        app.compatibility = -10000;
-        if (inputName.size() > std::max(app.pinyinLength, (int)app.compareName.size())) {
-            continue;
-        }
-        // 计算分割形式的匹配度
-        calculateNameParts(app, splits);
-        // 计算整体形式的匹配度
-        calculateCompareName(app, inputName);
-        app.compatibility += app.stableBias;
+        double compatibility = calculateCompatibility(app, inputName);
+        compatibility += app.stableBias;
+        app.compatibility = compatibility;
     }
-
-
     std::sort(programs.begin(), programs.end());
     std::reverse(programs.begin(), programs.end());
     // debugProgramNode();
@@ -150,110 +145,16 @@ std::wstring Database::preprocess(const std::wstring &inputText)
     return ret;
 }
 
-std::vector<std::wstring> Database::splitStringBySpace(const std::wstring &str)
+double Database::calculateStringCompatibility(const std::wstring& compareName, const std::wstring& inputName)
 {
-    std::vector<std::wstring> result;
-    std::wistringstream iss(str);
-    std::wstring word;
-    while (iss >> word) result.push_back(word);
-    return result;
-}
-
-std::vector<std::vector<std::wstring> > Database::splitString(const std::wstring &s)
-{
-    std::vector<std::vector<std::wstring>> result;
-    int maxSplits = std::min(5, static_cast<int>(std::sqrt(s.length())));
-
-    // 1. 按空格分割
-    result.push_back(splitStringBySpace(s));
-
-    // 2. 按大小写分割
-    result.push_back(splitStringByCamelCase(s));
-
-    // 3. 滑动窗口分割
-    for (int windowSize = 1; windowSize <= maxSplits; ++windowSize) {
-        std::vector<std::wstring> split;
-        for (int i = 0; i < s.length(); i += windowSize) {
-            split.push_back(s.substr(i, windowSize));
-        }
-        result.push_back(split);
-    }
-
-    // 4. 从左到右逐步分割
-    std::vector<std::wstring> leftToRight;
-    for (int i = 1; i <= s.length(); ++i) {
-        leftToRight.push_back(s.substr(0, i));
-        if (leftToRight.size() >= maxSplits) break;
-    }
-    result.push_back(leftToRight);
-
-    // 5. 从右到左逐步分割
-    std::vector<std::wstring> rightToLeft;
-    for (int i = s.length(); i > 0; --i) {
-        rightToLeft.insert(rightToLeft.begin(), s.substr(i - 1));
-        if (rightToLeft.size() >= maxSplits) break;
-    }
-    result.push_back(rightToLeft);
-
-    return result;
-}
-
-std::vector<std::wstring> Database::splitStringByCamelCase(const std::wstring &s)
-{
-    std::vector<std::wstring> result;
-    std::wstring current;
-    for (wchar_t c : s) {
-        if (std::isupper(c) && !current.empty()) {
-            result.push_back(current);
-            current.clear();
-        }
-        current += c;
-    }
-    if (!current.empty()) {
-        result.push_back(current);
-    }
-    return result;
-}
-
-void Database::calculateCompareName(ProgramNode &app, std::wstring inputName)
-{
-    double score = calculateEditDistance(app.compareName, inputName);
-    score = score * calculateWeight((double) inputName.size() / app.compareName.size());
-    app.compatibility = std::max(app.compatibility, score);
-}
-
-void Database::calculateNameParts(ProgramNode &app, const std::vector<std::vector<std::wstring> > &splits)
-{
-
-    // 分割形式的匹配度计算
-    for (const auto& split : splits) {
-        double score = 0.0;
-        int n = std::min(split.size(), app.nameParts.size());
-        for (int i = 0; i < n; ++i) {
-            score += calculateScore(split[i], app.nameParts[i]);
-        }
-        score *= calculatePenalty(app.nameParts.size());
-        app.compatibility = std::max(score, app.compatibility);
-    }
-}
-
-double Database::calculateScore(const std::wstring &inputPart, const std::wstring &targetPart)
-{
-    double k = calculateWeight(inputPart.size());
-    if (inputPart == targetPart) return 3 * k;
-    if (targetPart.starts_with(inputPart)) return 2 * k;
-    if (targetPart.find(inputPart) != std::wstring::npos) return k;
-    return calculateEditDistance(targetPart, inputPart);
+    double score = calculateEditDistance(compareName, inputName);
+    score = score * calculateWeight((double) inputName.size() / compareName.size());
+    return score;
 }
 
 double Database::calculateWeight(double inputLen)
 {
     return 3 * std::log2(inputLen + 1);
-}
-
-double Database::calculatePenalty(double x)
-{
-    return 1 / (x + std::log2(2 * (x + 1))) + 0.5;
 }
 
 double Database::calculateEditDistance(const std::wstring &compareName, const std::wstring &inputValue)
@@ -291,6 +192,19 @@ double Database::calculateEditDistance(const std::wstring &compareName, const st
     return calculateWeight(inputValue.size()) * std::exp(3 * value - 2);
 }
 
+double Database::calculateCompatibility(const ProgramNode &node, const std::wstring &inputName)
+{
+    double result = -10000;
+    for (auto& i : node.compareNames) {
+        if (i.size() < inputName.size()) {
+            continue;
+        }
+        double score = calculateStringCompatibility(i, inputName);
+        result = std::max(result, score);
+    }
+    return result;
+}
+
 void Database::debugProgramNode()
 {
     qDebug() << R"(
@@ -300,13 +214,27 @@ void Database::debugProgramNode()
         qDebug() << "------------------------------------------------------";
         qDebug() << i.showName << " " << i.compatibility;
         QString str;
-        for (auto &j : i.nameParts) {
+        for (auto &j : i.compareNames) {
             str += j;
-            str += " ";
+            str += "|";
         }
         qDebug() << str;
 
     }
+}
+
+std::wstring Database::extractInitials(const std::wstring &input)
+{
+    std::wstring result;
+    std::wistringstream iss(input);
+    std::wstring word;
+
+    while (iss >> word) {
+        if (!word.empty()) {
+            result += word[0];
+        }
+    }
+    return result;
 }
 
 bool Database::isValidName(const std::wstring &s)
@@ -317,6 +245,17 @@ bool Database::isValidName(const std::wstring &s)
         }
     }
     return true;
+}
+
+std::wstring Database::removeStringSpace(const std::wstring &str)
+{
+    std::wstring result;
+    for (auto& i : str) {
+        if (i != L' ') {
+            result.push_back(i);
+        }
+    }
+    return result;
 }
 
 

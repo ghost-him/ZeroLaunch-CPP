@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
 
-    //Database::getInstance().testCompareAlgorithm(L"stem");
+    Database::getInstance().testCompareAlgorithm(L"smqt");
 
     return app.exec();
 }

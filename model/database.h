@@ -8,8 +8,8 @@
 struct ProgramNode {
     std::wstring showName;
 
-    std::wstring compareName;
-    std::vector<std::wstring> nameParts;
+    // 精确匹配的名字，拼音的名字，拼音的首字母。
+    std::vector<std::wstring> compareNames;
 
     std::wstring programPath;
     std::wstring iconPath;
@@ -20,7 +20,7 @@ struct ProgramNode {
 
     bool isUWPApp;
 
-    int pinyinLength;
+    size_t maxNameLength;
 
     const bool operator<(const ProgramNode& other) const {
         if (compatibility != other.compatibility) {
@@ -28,7 +28,7 @@ struct ProgramNode {
         } else if (launchTime != other.launchTime) {
             return launchTime > other.launchTime;
         } else {
-            return compareName < other.compareName;
+            return compareNames[0] < other.compareNames[0];
         }
     }
 };
@@ -48,7 +48,7 @@ public:
 
     void insertProgramInfo(const std::wstring& programName, const std::wstring& programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp);
 
-    void updateScores(const std::wstring& inputName);
+    void updateScores(std::wstring inputName);
 
     const std::vector<ProgramNode>& getProgramsFile();
 
@@ -69,29 +69,24 @@ private:
     std::unordered_set<std::wstring> cache;
 
     std::wstring& tolower(std::wstring& other);
+    // 该函数会去除程序名字中的版本号与括号中的内容，同时还会转换为小写的名字
     std::wstring preprocess(const std::wstring& inputText);
 
-    std::vector<std::wstring> splitStringBySpace(const std::wstring& str);
-
-    std::vector<std::vector<std::wstring>> splitString(const std::wstring& s);
-    // 辅助函数：按大小写分割
-    std::vector<std::wstring> splitStringByCamelCase(const std::wstring& s);
-
-    void calculateCompareName(ProgramNode& app, std::wstring inputName);
-
-    void calculateNameParts(ProgramNode& app, const std::vector<std::vector<std::wstring>>& splits);
-
-    double calculateScore(const std::wstring& inputPart, const std::wstring& targetPart);
+    double calculateStringCompatibility(const std::wstring& compareName, const std::wstring& inputName);
 
     double calculateWeight(double inputLen);
 
-    double calculatePenalty(double x);
-
     double calculateEditDistance(const std::wstring& compareName, const std::wstring& inputValue);
+
+    double calculateCompatibility(const ProgramNode& node, const std::wstring& inputName);
 
     void debugProgramNode();
 
+    std::wstring extractInitials(const std::wstring& name);
+
     bool isValidName(const std::wstring& s);
+
+    std::wstring removeStringSpace(const std::wstring& str);
 
 };
 
