@@ -77,7 +77,7 @@ ESC：当搜索栏中有文字时，则清屏；没有文字时，则隐藏搜�
     trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
 
-    Database::getInstance().testCompareAlgorithm(L"smqt");
+    //Database::getInstance().testCompareAlgorithm(L"smqt");
 
     return app.exec();
 }
