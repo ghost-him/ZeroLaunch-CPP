@@ -5,6 +5,11 @@
 #include <QJsonObject>
 #include "../controller/utils.h"
 #include <QCloseEvent>
+#include <QItemDelegate>
+#include <QTableView>
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
+#include <QScrollBar>
 
 SettingWindow::SettingWindow(QWidget *parent)
     : QWidget(parent)
@@ -14,6 +19,40 @@ SettingWindow::SettingWindow(QWidget *parent)
     this->setWindowTitle("设置");
     // 设置窗口无法更改大小
     this->setFixedSize(this->size());
+
+    // 初始化4个标签页的名字
+    auto& tabWidget = ui->tabWidget;
+
+    tabWidget->setTabText(0, "程序设置");
+    tabWidget->setTabText(1, "自定义搜索路径");
+    tabWidget->setTabText(2, "关键字过滤设置");
+    tabWidget->setTabText(3, "查看当前索引的所有的程序");
+
+    // 初始化关键字过滤器的表格
+
+    QStringList keyFilterHeaders;
+    keyFilterHeaders << "关键字" << "偏移值" << "备注";
+    //ui->tableKeyFilter->setHorizontalHeaderLabels(keyFilterHeaders);
+    // ui->tableKeyFilter->setModel(keyFilterItemModel);
+    // ui->tableKeyFilter->setSelectionModel(keyFileterSelectModel);
+    // ui->tableKeyFilter->setSelectionMode(QAbstractItemView::SingleSelection);
+    // ui->tableKeyFilter->setSelectionBehavior(QAbstractItemView::SelectItems);
+
+
+
+    // 初始化
+    ui->tableIndexedApp->setColumnCount(4);
+    ui->tableIndexedApp->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // 设置水平滚动模式为像素级
+    ui->tableIndexedApp->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    // 设置垂直滚动模式为像素级
+    ui->tableIndexedApp->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+    ui->tableIndexedApp->horizontalScrollBar()->setSingleStep(10);
+    ui->tableIndexedApp->verticalScrollBar()->setSingleStep(10);
+    QStringList indexedAppHeaders;
+    indexedAppHeaders << "程序名" << "是否为UWP应用" << "固定偏移值" << "程序路径";
+    ui->tableIndexedApp->setHorizontalHeaderLabels(indexedAppHeaders);
 
 }
 
@@ -45,6 +84,37 @@ void SettingWindow::show()
     setFocus();
 }
 
+void SettingWindow::clearIndexedAppTable()
+{
+    ui->tableIndexedApp->clearContents();
+    nextRow = 0;
+}
+
+void SettingWindow::addIndexedAppItem(QString programName, bool isUWPApp, int staticBias, QString programPath)
+{
+    QStringList data {programName,
+                     isUWPApp? "true": "false",
+                     QString::number(staticBias),
+                     programPath};
+
+    if (nextRow == ui->tableIndexedApp->rowCount()) {
+        ui->tableIndexedApp->insertRow(nextRow);
+    }
+
+    for (int col {0}; col < data.size(); col ++) {
+        QTableWidgetItem* item = new QTableWidgetItem(data.at(col));
+        item->setToolTip(data.at(col));
+        ui->tableIndexedApp->setItem(nextRow, col, item);
+    }
+    nextRow ++;
+}
+
+void SettingWindow::adjustIndexedAppTable()
+{
+    ui->tableIndexedApp->sortItems(0, Qt::AscendingOrder);
+    ui->tableIndexedApp->resizeColumnsToContents();
+}
+
 void SettingWindow::closeEvent(QCloseEvent *event)
 {
     this->hide();
@@ -69,7 +139,7 @@ void SettingWindow::on_btnConfirm_clicked()
     emit confirmSetting(configure);
     hide();
 }
-
+/*
 void SettingWindow::on_btnCustomDir_clicked()
 {
     QString filePath = getCustomDirectoryPath();
@@ -91,5 +161,12 @@ void SettingWindow::on_btnBannedDir_clicked()
         QMessageBox::warning(nullptr, "Error", "Cannot open file with default application.");
     }
 
+}
+*/
+
+void SettingWindow::on_pushButton_clicked()
+{
+    // 更新当前的显示的内容
+    emit sg_refreshIndexedApp();
 }
 

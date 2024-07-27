@@ -4,9 +4,13 @@
 #include <QWidget>
 #include "../controller/utils.h"
 
+
 namespace Ui {
 class SettingWindow;
 }
+
+class QStandardItemModel;
+class QItemSelectionModel;
 
 class SettingWindow : public QWidget
 {
@@ -26,6 +30,12 @@ public:
 
     void show();
 
+    void clearIndexedAppTable();
+
+    void addIndexedAppItem(QString programName, bool isUWPApp, int staticBias, QString programPath);
+
+    void adjustIndexedAppTable();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 
@@ -33,12 +43,12 @@ protected:
 signals:
     void confirmSetting(SettingWindowConfigure configure);
 
+    void sg_refreshIndexedApp();
+
 private slots:
     void on_btnConfirm_clicked();
 
-    void on_btnCustomDir_clicked();
-
-    void on_btnBannedDir_clicked();
+    void on_pushButton_clicked();
 
 private:
     explicit SettingWindow(QWidget *parent = nullptr);
@@ -46,6 +56,14 @@ private:
 
 
     Ui::SettingWindow *ui;
+
+    // 维护tableview
+    QStandardItemModel* keyFilterItemModel;
+    QItemSelectionModel* keyFileterSelectModel;
+
+    int nextRow {0};
+
+
 };
 
 #endif // SETTINGWINDOW_H

@@ -39,6 +39,10 @@ Controller::Controller() {
         this->launchSelectedProgram();
     });
 
+    QObject::connect(&settingWindow, &SettingWindow::sg_refreshIndexedApp, [this](){
+        this->refreshIndexedApp();
+    });
+
 }
 
 void Controller::loadConfigure()
@@ -173,6 +177,7 @@ void Controller::init()
 
     setAutoStart(classConfig.isAutoStart);
 
+    refreshIndexedApp();
 }
 
 void Controller::launchSelectedProgram()
@@ -273,6 +278,11 @@ void Controller::saveSetting(SettingWindowConfigure configure)
 
     // 保存好后，重新加载配置
     init();
+}
+
+void Controller::refreshIndexedApp()
+{
+    uiController.refreshIndexedApp();
 }
 
 

@@ -109,6 +109,22 @@ void UIController::openSettingWindow()
     settingWindow.show();
 }
 
+void UIController::refreshIndexedApp()
+{
+    SettingWindow& settingWindow {SettingWindow::getInstance()};
+    Database& db {Database::getInstance()};
+
+    settingWindow.clearIndexedAppTable();
+    auto& files {db.getProgramsFile()};
+    for (auto& i : files) {
+        settingWindow.addIndexedAppItem(QString::fromStdWString(i.showName),
+                                        i.isUWPApp,
+                                        i.stableBias,
+                                        QString::fromStdWString(i.programPath));
+    }
+    settingWindow.adjustIndexedAppTable();
+}
+
 const QPixmap &UIController::getIcon(const std::wstring &iconPath, bool isUWPApp)
 {
     if (isUWPApp)

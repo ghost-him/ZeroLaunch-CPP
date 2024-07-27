@@ -7,6 +7,7 @@
 
 class UIController
 {
+
 public:
     UIController();
 
@@ -24,6 +25,8 @@ public:
     void clearIconCache();
 
     void openSettingWindow();
+
+    void refreshIndexedApp();
 
     const QPixmap& getIcon(const std::wstring& iconPath, bool isUWPApp);
 

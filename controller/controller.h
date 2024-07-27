@@ -35,7 +35,6 @@ private:
 
     Controller();
 
-
     void loadConfigure();
 
     void initConfigureFile();
@@ -45,6 +44,8 @@ private:
     bool startProcessNormally(const std::wstring& programPath, const std::wstring& workingDirectory);
 
     void saveSetting(SettingWindowConfigure configure);
+
+    void refreshIndexedApp();
 
     QJsonObject configure;
 };
