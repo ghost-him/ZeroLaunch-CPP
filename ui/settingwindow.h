@@ -3,14 +3,26 @@
 
 #include <QWidget>
 #include "../controller/utils.h"
-
+#include "spinboxdelegate.h"
+#include <QEvent>
 
 namespace Ui {
 class SettingWindow;
+class NoToolTipFilter;
 }
 
 class QStandardItemModel;
 class QItemSelectionModel;
+
+class NoToolTipFilter : public QObject
+{
+public:
+    explicit NoToolTipFilter(QObject* parent = nullptr);
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
+};
 
 class SettingWindow : public QWidget
 {
@@ -50,6 +62,12 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_btnAddKeyItem_clicked();
+
+    void on_btnDelKeyItem_clicked();
+
+    void on_btnResetKeyTable_clicked();
+
 private:
     explicit SettingWindow(QWidget *parent = nullptr);
     ~SettingWindow();
@@ -59,7 +77,8 @@ private:
 
     // 维护tableview
     QStandardItemModel* keyFilterItemModel;
-    QItemSelectionModel* keyFileterSelectModel;
+    QItemSelectionModel* keyFilterSelectModel;
+    SpinBoxDelegate* spinBoxDelegate;
 
     int nextRow {0};
 

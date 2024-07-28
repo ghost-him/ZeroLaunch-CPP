@@ -11,6 +11,7 @@
 #include <QItemSelectionModel>
 #include <QScrollBar>
 
+
 SettingWindow::SettingWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::SettingWindow)
@@ -33,12 +34,27 @@ SettingWindow::SettingWindow(QWidget *parent)
     QStringList keyFilterHeaders;
     keyFilterHeaders << "关键字" << "偏移值" << "备注";
     //ui->tableKeyFilter->setHorizontalHeaderLabels(keyFilterHeaders);
-    // ui->tableKeyFilter->setModel(keyFilterItemModel);
-    // ui->tableKeyFilter->setSelectionModel(keyFileterSelectModel);
-    // ui->tableKeyFilter->setSelectionMode(QAbstractItemView::SingleSelection);
-    // ui->tableKeyFilter->setSelectionBehavior(QAbstractItemView::SelectItems);
+    keyFilterItemModel = new QStandardItemModel(0, 3, this);
+    keyFilterSelectModel = new QItemSelectionModel(keyFilterItemModel, this);
 
+    ui->tableKeyFilter->setModel(keyFilterItemModel);
+    ui->tableKeyFilter->setSelectionModel(keyFilterSelectModel);
+    ui->tableKeyFilter->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableKeyFilter->setSelectionBehavior(QAbstractItemView::SelectItems);
 
+    spinBoxDelegate = new SpinBoxDelegate(this);
+    ui->tableKeyFilter->setItemDelegateForColumn(1, spinBoxDelegate);
+
+    NoToolTipFilter *filter = new NoToolTipFilter(this);
+    ui->tableKeyFilter->viewport()->installEventFilter(filter);
+
+    keyFilterItemModel->setHorizontalHeaderLabels(keyFilterHeaders);
+    ui->tableKeyFilter->horizontalHeader()->setStretchLastSection(true);
+
+    ui->tableKeyFilter->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->tableKeyFilter->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    ui->tableKeyFilter->horizontalScrollBar()->setSingleStep(10);
+    ui->tableKeyFilter->verticalScrollBar()->setSingleStep(10);
 
     // 初始化
     ui->tableIndexedApp->setColumnCount(4);
@@ -168,5 +184,51 @@ void SettingWindow::on_pushButton_clicked()
 {
     // 更新当前的显示的内容
     emit sg_refreshIndexedApp();
+}
+
+
+void SettingWindow::on_btnAddKeyItem_clicked()
+{
+    // 添加一行
+    int row = keyFilterItemModel->rowCount();
+    keyFilterItemModel->insertRow(row);
+}
+
+
+void SettingWindow::on_btnDelKeyItem_clicked()
+{
+    if (keyFilterSelectModel->hasSelection()) {
+        int row = keyFilterSelectModel->currentIndex().row();
+        keyFilterItemModel->removeRow(row);
+    }
+}
+
+
+NoToolTipFilter::NoToolTipFilter(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+bool NoToolTipFilter::eventFilter(QObject *watched, QEvent *event)
+{
+    {
+        if (event->type() == QEvent::ToolTip) {
+            return true; // 阻止事件继续传播
+        }
+        return QObject::eventFilter(watched, event);
+    }
+}
+
+void SettingWindow::on_btnResetKeyTable_clicked()
+{
+    // 保存当前的表头标签
+    QStringList horizontalHeaders;
+    for (int i = 0; i < keyFilterItemModel->columnCount(); ++i) {
+        horizontalHeaders << keyFilterItemModel->horizontalHeaderItem(i)->text();
+    }
+
+    keyFilterItemModel->clear();
+    keyFilterItemModel->setHorizontalHeaderLabels(horizontalHeaders);
 }
 

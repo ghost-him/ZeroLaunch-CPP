@@ -49,6 +49,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         controller/windowhook.h controller/windowhook.cpp
         model/chineseconvertpinyin.h model/chineseconvertpinyin.cpp
         controller/uwpapp.h controller/uwpapp.cpp
+        ui/spinboxdelegate.h ui/spinboxdelegate.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET ZeroLaunch APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
