@@ -232,3 +232,53 @@ void SettingWindow::on_btnResetKeyTable_clicked()
     keyFilterItemModel->setHorizontalHeaderLabels(horizontalHeaders);
 }
 
+
+void SettingWindow::on_btnResetSearchList_clicked()
+{
+    ui->searchList->clear();
+}
+
+
+void SettingWindow::on_btnAddSearchItem_clicked()
+{
+    QListWidgetItem *item = new QListWidgetItem("[在此输入目标路径]");
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    ui->searchList->addItem(item);
+}
+
+
+void SettingWindow::on_btnDelSearchItem_clicked()
+{
+    // 获取选中的项
+    QListWidgetItem *selectedItem = ui->searchList->currentItem();
+    if (selectedItem) {
+        // 删除选中的项
+        delete ui->searchList->takeItem(ui->searchList->row(selectedItem));
+    }
+}
+
+
+void SettingWindow::on_btnResetBannedList_clicked()
+{
+    ui->bannedList->clear();
+}
+
+
+void SettingWindow::on_btnAddBannedItem_clicked()
+{
+    QListWidgetItem *item = new QListWidgetItem("[在此输入目标路径]");
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    ui->bannedList->addItem(item);
+}
+
+
+void SettingWindow::on_btnDelBannedItem_clicked()
+{
+    // 获取选中的项
+    QListWidgetItem *selectedItem = ui->bannedList->currentItem();
+    if (selectedItem) {
+        // 删除选中的项
+        delete ui->bannedList->takeItem(ui->bannedList->row(selectedItem));
+    }
+}
+

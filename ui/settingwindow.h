@@ -68,6 +68,18 @@ private slots:
 
     void on_btnResetKeyTable_clicked();
 
+    void on_btnResetSearchList_clicked();
+
+    void on_btnAddSearchItem_clicked();
+
+    void on_btnDelSearchItem_clicked();
+
+    void on_btnResetBannedList_clicked();
+
+    void on_btnAddBannedItem_clicked();
+
+    void on_btnDelBannedItem_clicked();
+
 private:
     explicit SettingWindow(QWidget *parent = nullptr);
     ~SettingWindow();
