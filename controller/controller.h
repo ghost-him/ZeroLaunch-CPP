@@ -35,9 +35,9 @@ private:
 
     Controller();
 
-    void loadConfigure();
+    void loadConfigFile();
 
-    void initConfigureFile();
+    void initConfigFile();
 
     bool startProcessWithElevation(const std::wstring& programPath, const std::wstring& workingDirectory);
 

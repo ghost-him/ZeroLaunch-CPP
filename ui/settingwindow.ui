@@ -20,7 +20,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="programSetting">
       <attribute name="title">
@@ -348,9 +348,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="boxIgnoreUninstall">
+          <widget class="QPushButton" name="btnIgnoreUnstallApp">
            <property name="text">
             <string>忽略卸载程序</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnIgnoreHelpApp">
+           <property name="text">
+            <string>忽略帮助文档</string>
            </property>
           </widget>
          </item>

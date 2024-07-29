@@ -15,7 +15,7 @@ struct ProgramNode {
     std::wstring iconPath;
 
     double compatibility;
-    int stableBias;
+    double stableBias;
     int launchTime;
 
     bool isUWPApp;
@@ -60,13 +60,14 @@ public:
 
     void clearProgramInfo();
 
-    void addForbiddenName(const std::wstring& name);
+    void addKeyFilter(const std::wstring& key, double stableBias);
 
 private:
     Database();
-    std::vector<std::wstring> forbiddenNames;
     std::vector<ProgramNode> programs;
     std::unordered_set<std::wstring> cache;
+
+    std::vector<std::pair<std::wstring, double>> keyFilters;
 
     std::wstring& tolower(std::wstring& other);
     // 该函数会去除程序名字中的版本号与括号中的内容，同时还会转换为小写的名字
@@ -82,9 +83,9 @@ private:
 
     void debugProgramNode();
 
-    std::wstring extractInitials(const std::wstring& name);
+    double getStableBias(const std::wstring& key);
 
-    bool isValidName(const std::wstring& s);
+    std::wstring extractInitials(const std::wstring& name);
 
     std::wstring removeStringSpace(const std::wstring& str);
 

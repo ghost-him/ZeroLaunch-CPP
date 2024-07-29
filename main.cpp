@@ -10,11 +10,13 @@
 #include "controller/utils.h"
 #include "controller/controller.h"
 #include "controller/windowhook.h"
+#include <QJsonDocument>
+#include <QStyleHints>
 
 int main(int argc, char *argv[])
 {
     SingleApplication app(argc, argv);
-    
+
     if (app.isRunning()) {
         QMessageBox::warning(nullptr, "提示", "当前程序已在运行");
         return 0;
@@ -76,8 +78,5 @@ ESC：当搜索栏中有文字时，则清屏；没有文字时，则隐藏搜�
     trayIcon.setIcon(QIcon(":/icon/trayIcon.svg"));
     trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
-
-    //Database::getInstance().testCompareAlgorithm(L"smqt");
-
     return app.exec();
 }

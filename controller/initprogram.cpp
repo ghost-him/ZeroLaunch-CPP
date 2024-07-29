@@ -11,6 +11,11 @@
 #include <QFile>
 #include "utils.h"
 #include "uwpapp.h"
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QFileInfo>
+
 
 InitProgram::InitProgram() {}
 
@@ -62,45 +67,21 @@ void InitProgram::initUWPProgram()
     }
 }
 
-void InitProgram::initCustomPath()
+void InitProgram::initCustomPath(const std::vector<QString>& bannedPaths, const std::vector<QString>& searchPaths)
 {
-    QString customProgramDir = getCustomDirectoryPath();
-    QString bannedProgramDir = getBannedDirectoryPath();
-
-    createFile(customProgramDir, "#在此文件下输入要索引的目录，程序会搜索所给目录与其一级子目录下的所有可执行程序，一行为一项\n#例：C:\\Users\\ghost\\Desktop");
-    createFile(bannedProgramDir, "#在此文件下输入不希望索引的目录，程序不会搜索该目录下所有的文件与其子文件夹，\n#例：C:\\Users\\ghost\\Desktop\\clipboard");
-
-    {
-        // 打开文件
-        QFile file(bannedProgramDir);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "无法打开文件进行读取";
-            return;
-        }
-
-        QTextStream in(&file);
-        while(!in.atEnd()) {
-            QString line = in.readLine();
-            if (line.startsWith('#'))
-                continue;
-            std::wstring wline = line.toStdWString();
-            bannedPath.push_back(wline);
+    // 先存储不遍历的路径
+    for (const auto & i : bannedPaths) {
+        QFileInfo info(i);
+        if (info.exists()) {
+            std::wstring wline = i.toStdWString();
+            _bannedPaths.push_back(wline);
         }
     }
-    {
-        // 打开文件
-        QFile file(customProgramDir);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "无法打开文件进行读取";
-            return;
-        }
 
-        QTextStream in(&file);
-        while(!in.atEnd()) {
-            QString line = in.readLine();
-            if (line.startsWith('#'))
-                continue;
-            std::wstring wline = line.toStdWString();
+    for (const auto& i : searchPaths) {
+        QFileInfo info(i);
+        if (info.exists()) {
+            std::wstring wline = i.toStdWString();
             initTargetDirectory(wline, 1, 0);
         }
     }
@@ -110,7 +91,7 @@ void InitProgram::clearStore()
 {
     Database& db = Database::getInstance();
     db.clearProgramInfo();
-    bannedPath.clear();
+    _bannedPaths.clear();
 }
 
 void InitProgram::initTargetDirectory(const std::wstring &path, unsigned int depth, int level_bias)
@@ -127,7 +108,7 @@ void InitProgram::initTargetDirectory(const std::wstring &path, unsigned int dep
                     std::wstring programName = entry.path().filename();
                     // 获取该程序的目录
                     std::wstring programPath = entry.path().wstring();
-                    // 插入到数据库中
+
                     db.insertProgramInfo(programName, programPath, programPath, level, false);
                 } else if (entry.is_directory()) {
                     traverse(entry.path(), currentDepth + 1);
@@ -178,13 +159,12 @@ bool InitProgram::isValidFile(const std::filesystem::path &path)
 }
 
 bool InitProgram::isValidPath(const fs::directory_entry& entry) {
-    for (const auto& i : bannedPath) {
+    for (const auto& i : _bannedPaths) {
         if (starts_with_directory(entry, i))
             return false;
     }
     return true;
 }
-
 
 QString InitProgram::getDefaultProgramFilesPath(bool is64Bit)
 {

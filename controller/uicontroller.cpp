@@ -59,6 +59,20 @@ void UIController::initUI(const SettingWindowConfigure &configure)
     SearchBar& searchBar = SearchBar::getInstance();
     searchBar.setPlaceholderText(configure.searchBarPlaceholderText);
 
+
+    settingWindow.clearSearchList();
+    for (const auto& i : configure.searchPaths) {
+        settingWindow.addSearchListItem(i);
+    }
+    settingWindow.clearBannedList();
+    for (const auto& i : configure.bannedPaths) {
+        settingWindow.addBannedListItem(i);
+    }
+    settingWindow.clearKeyFilterTable();
+    for (const auto& i : configure.keyFilters) {
+        settingWindow.addkeyFilterItem(i.key, i.stableBias, i.note);
+    }
+
     updateResultFrame(true);
 }
 

@@ -10,6 +10,7 @@
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
 #include <QScrollBar>
+#include "../controller/utils.h"
 
 
 SettingWindow::SettingWindow(QWidget *parent)
@@ -89,7 +90,6 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->LEPlaceholderText->setText(config.searchBarPlaceholderText);
     ui->LEEmptyText->setText(config.resultFrameEmptyText);
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
-    ui->boxIgnoreUninstall->setChecked(config.isIgnoreUninstallApp);
 }
 
 void SettingWindow::show()
@@ -106,11 +106,11 @@ void SettingWindow::clearIndexedAppTable()
     nextRow = 0;
 }
 
-void SettingWindow::addIndexedAppItem(QString programName, bool isUWPApp, int staticBias, QString programPath)
+void SettingWindow::addIndexedAppItem(QString programName, bool isUWPApp, int stableBias, QString programPath)
 {
     QStringList data {programName,
                      isUWPApp? "true": "false",
-                     QString::number(staticBias),
+                     QString::number(stableBias),
                      programPath};
 
     if (nextRow == ui->tableIndexedApp->rowCount()) {
@@ -129,6 +129,53 @@ void SettingWindow::adjustIndexedAppTable()
 {
     ui->tableIndexedApp->sortItems(0, Qt::AscendingOrder);
     ui->tableIndexedApp->resizeColumnsToContents();
+}
+
+void SettingWindow::clearKeyFilterTable()
+{
+    on_btnResetKeyTable_clicked();
+}
+
+void SettingWindow::addkeyFilterItem(const QString &programName, double stableBias, const QString &note)
+{
+    // 获取当前的行数
+    int rowCount = keyFilterItemModel->rowCount();
+
+    // 插入新的一行
+    keyFilterItemModel->insertRow(rowCount);
+
+    // 设置每一列的数据
+    QModelIndex index;
+    index = keyFilterItemModel->index(rowCount, 0); // 第一列
+    keyFilterItemModel->setData(index, programName);
+
+    index = keyFilterItemModel->index(rowCount, 1); // 第二列
+    keyFilterItemModel->setData(index, stableBias);
+
+    index = keyFilterItemModel->index(rowCount, 2); // 第三列
+    keyFilterItemModel->setData(index, note);
+}
+
+void SettingWindow::clearSearchList()
+{
+    on_btnResetSearchList_clicked();
+}
+
+void SettingWindow::addSearchListItem(const QString &searchPath)
+{
+    on_btnAddSearchItem_clicked();
+    ui->searchList->item(ui->searchList->count() - 1)->setText(searchPath);
+}
+
+void SettingWindow::clearBannedList()
+{
+    on_btnResetBannedList_clicked();
+}
+
+void SettingWindow::addBannedListItem(const QString &bannedPath)
+{
+    on_btnAddBannedItem_clicked();
+    ui->bannedList->item(ui->bannedList->count() - 1)->setText(bannedPath);
 }
 
 void SettingWindow::closeEvent(QCloseEvent *event)
@@ -150,10 +197,36 @@ void SettingWindow::on_btnConfirm_clicked()
     configure.searchBarPlaceholderText = ui->LEPlaceholderText->text();
     configure.resultFrameEmptyText = ui->LEEmptyText->text();
     configure.isSearchUWP = ui->boxSearchUWP->isChecked();
-    configure.isIgnoreUninstallApp = ui->boxIgnoreUninstall->isChecked();
+
+    for (int i = 0; i < ui->bannedList->count(); i ++) {
+        QListWidgetItem* item = ui->bannedList->item(i);
+        configure.bannedPaths.push_back(item->text());
+    }
+
+    for (int i = 0; i < ui->searchList->count(); i ++) {
+        QListWidgetItem* item = ui->searchList->item(i);
+        configure.searchPaths.push_back(item->text());
+    }
+
+    int rowCount = keyFilterItemModel->rowCount();
+    for (int i = 0; i < rowCount; i ++ ) {
+        SettingWindowConfigure::KeyFilter keyFilter;
+
+        auto item = keyFilterItemModel->item(i, 0);
+        keyFilter.key = item ? item->text() : "";
+
+        item = keyFilterItemModel->item(i, 1);
+        keyFilter.stableBias = item ? item->text().toDouble() : 0.0;
+
+        item = keyFilterItemModel->item(i, 2);
+        keyFilter.note = item ? item->text() : "";
+
+        configure.keyFilters.push_back(std::move(keyFilter));
+    }
+
+    hide();
     // 保存文件
     emit confirmSetting(configure);
-    hide();
 }
 /*
 void SettingWindow::on_btnCustomDir_clicked()
@@ -241,7 +314,7 @@ void SettingWindow::on_btnResetSearchList_clicked()
 
 void SettingWindow::on_btnAddSearchItem_clicked()
 {
-    QListWidgetItem *item = new QListWidgetItem("[在此输入目标路径]");
+    QListWidgetItem *item = new QListWidgetItem(getDefaultItemPlaceHolder());
     item->setFlags(item->flags() | Qt::ItemIsEditable);
     ui->searchList->addItem(item);
 }
@@ -266,7 +339,7 @@ void SettingWindow::on_btnResetBannedList_clicked()
 
 void SettingWindow::on_btnAddBannedItem_clicked()
 {
-    QListWidgetItem *item = new QListWidgetItem("[在此输入目标路径]");
+    QListWidgetItem *item = new QListWidgetItem(getDefaultItemPlaceHolder());
     item->setFlags(item->flags() | Qt::ItemIsEditable);
     ui->bannedList->addItem(item);
 }
@@ -280,5 +353,19 @@ void SettingWindow::on_btnDelBannedItem_clicked()
         // 删除选中的项
         delete ui->bannedList->takeItem(ui->bannedList->row(selectedItem));
     }
+}
+
+
+void SettingWindow::on_btnIgnoreUnstallApp_clicked()
+{
+    addkeyFilterItem("卸载", -5000, "忽略卸载程序");
+    addkeyFilterItem("uninstall", -5000, "忽略卸载程序");
+}
+
+
+void SettingWindow::on_btnIgnoreHelpApp_clicked()
+{
+    addkeyFilterItem("帮助", -5000, "忽略帮助文件");
+    addkeyFilterItem("help", -5000, "忽略帮助文件");
 }
 

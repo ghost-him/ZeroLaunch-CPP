@@ -2,6 +2,7 @@
 #include "qjsonobject.h"
 #include <QApplication>
 #include <QFile>
+#include <QJsonArray>
 
 // Helper function to extract HICON from a file
 HICON ExtractIconFromFile(const QString& filePath) {
@@ -27,8 +28,7 @@ QPixmap getFileIcon(const QString& filePath) {
     return QPixmap(":/icon/tips.svg");
 }
 
-QJsonObject getDefaultSettingJson()
-{
+QJsonObject getDefaultConfigJson() {
     QJsonObject jsonObject;
 
     jsonObject["isAutoStart"] = false;
@@ -40,24 +40,33 @@ QJsonObject getDefaultSettingJson()
     jsonObject["searchBarPlaceholderText"] = "Hello, ZeroLaunch!";
     jsonObject["resultFrameEmptyText"] = "当前搜索无结果";
     jsonObject["searchUWP"] = true;
-    jsonObject["isIgnoreUninstallApp"] = true;
 
+    QJsonArray searchItems;
+    QJsonArray bannedItems;
+
+    QJsonObject searchItem = newSearchItem(getDefaultItemPlaceHolder());
+    QJsonObject bannedItem = newBannedItem(getDefaultItemPlaceHolder());
+
+    searchItems.push_back(searchItem);
+    bannedItems.push_back(bannedItem);
+
+    jsonObject["searchPaths"] = searchItems;
+    jsonObject["bannedPaths"] = bannedItems;
+
+    QJsonArray keyFilterItems;
+    QJsonObject keyFilter1 = newKeyFilterObject("卸载", -5000, "忽略卸载程序");
+    QJsonObject keyFilter2 = newKeyFilterObject("uninstall", -5000, "忽略卸载程序");
+
+    keyFilterItems.push_back(keyFilter1);
+    keyFilterItems.push_back(keyFilter2);
+
+    jsonObject["keyFilters"] = keyFilterItems;
     return jsonObject;
 }
 
-QString getConfigureFilePath()
+QString getConfigPath()
 {
-    return QApplication::applicationDirPath() + "/configure";
-}
-
-QString getCustomDirectoryPath()
-{
-    return QApplication::applicationDirPath() + "/customProgramDir.txt";
-}
-
-QString getBannedDirectoryPath()
-{
-    return QApplication::applicationDirPath() + "/bannedProgramDir.txt";
+    return QApplication::applicationDirPath() + "/Config.json";
 }
 
 void createFile(const QString &path, const QString &defaultContent) {
@@ -87,7 +96,28 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     json["searchBarPlaceholderText"] = config.searchBarPlaceholderText;
     json["resultFrameEmptyText"] = config.resultFrameEmptyText;
     json["searchUWP"] = config.isSearchUWP;
-    json["isIgnoreUninstallApp"] = config.isIgnoreUninstallApp;
+
+    QJsonArray bannedItems;
+    for (const auto& i : config.bannedPaths) {
+        QJsonObject obj = newBannedItem(i);
+        bannedItems.push_back(std::move(obj));
+    }
+    json["bannedPaths"] = bannedItems;
+
+    QJsonArray searchItems;
+    for (const auto& i : config.searchPaths) {
+        QJsonObject obj = newSearchItem(i);
+        searchItems.push_back(std::move(obj));
+    }
+    json["searchPaths"] = searchItems;
+
+    QJsonArray keyFilterItems;
+    for (const auto& i : config.keyFilters) {
+        QJsonObject obj = newKeyFilterObject(i.key, i.stableBias, i.note);
+        keyFilterItems.push_back(std::move(obj));
+    }
+    json["keyFilters"] = keyFilterItems;
+
     return json;
 }
 
@@ -105,13 +135,30 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     ret.searchBarPlaceholderText = json["searchBarPlaceholderText"].toString();
     ret.resultFrameEmptyText = json["resultFrameEmptyText"].toString();
     ret.isSearchUWP = json["searchUWP"].toBool();
-    ret.isIgnoreUninstallApp = json["isIgnoreUninstallApp"].toBool();
+
+    QJsonArray bannedItems = json["bannedPaths"].toArray();
+    for (const auto& i : bannedItems) {
+        ret.bannedPaths.push_back(i.toObject()["bannedPath"].toString());
+    }
+
+    QJsonArray searchItems = json["searchPaths"].toArray();
+    for (const auto& i : searchItems) {
+        ret.searchPaths.push_back(i.toObject()["searchPath"].toString());
+    }
+
+    QJsonArray keyFilterItems = json["keyFilters"].toArray();
+    for (const auto& i : keyFilterItems) {
+        QJsonObject obj = i .toObject();
+        SettingWindowConfigure::KeyFilter keyFilter {obj["key"].toString(), obj["stableBias"].toDouble(), obj["note"].toString()};
+        ret.keyFilters.push_back(std::move(keyFilter));
+    }
+
     return ret;
 }
 
 QString getProgramVersion()
 {
-    return "ZeroLaunch 0.6.3";
+    return "ZeroLaunch 0.7";
 }
 
 QString getPinyinConfigPath()
@@ -123,4 +170,31 @@ QString GetShellDirectory(int type) {
     wchar_t buffer[_MAX_PATH];
     SHGetFolderPathW(NULL, type, NULL, 0, buffer);
     return QString::fromWCharArray(buffer);
+}
+
+QString getDefaultItemPlaceHolder() {
+    return "[在此输入目标路径]";
+}
+
+QJsonObject newKeyFilterObject(const QString &key, double stableBias, const QString &note)
+{
+    QJsonObject ret;
+    ret["key"] = key;
+    ret["stableBias"] = stableBias;
+    ret["note"] = note;
+    return ret;
+}
+
+QJsonObject newSearchItem(const QString &searchPath)
+{
+    QJsonObject ret;
+    ret["searchPath"] = searchPath;
+    return ret;
+}
+
+QJsonObject newBannedItem(const QString &bannedPath)
+{
+    QJsonObject ret;
+    ret["bannedPath"] = bannedPath;
+    return ret;
 }

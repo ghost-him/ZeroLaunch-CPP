@@ -45,19 +45,19 @@ Controller::Controller() {
 
 }
 
-void Controller::loadConfigure()
+void Controller::loadConfigFile()
 {
-    QString filePath = getConfigureFilePath();
+    QString filePath = getConfigPath();
     // 检查文件是否存在
     QFile file(filePath);
     if (!file.exists()) {
         qDebug() << "File does not exist.";
-        initConfigureFile();
+        initConfigFile();
     }
     // 打开文件
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Failed to open the file.";
-        QMessageBox::critical(nullptr, "检测到错误", (QString)"请打开程序目录，删除configure文件后重新运行本程序, error:" + file.errorString());
+        QMessageBox::critical(nullptr, "检测到错误", (QString)"请打开程序目录，删除[Config.json]文件后重新运行本程序, error:" + file.errorString());
         exit(1);
     }
 
@@ -71,32 +71,26 @@ void Controller::loadConfigure()
 
     if (parseError.error != QJsonParseError::NoError) {
         qDebug() << "Invalid JSON file:" << parseError.errorString();
-        initConfigureFile();
+        initConfigFile();
         jsonDoc = QJsonDocument::fromJson(fileContent, &parseError);
     }
     // 正确的解析了文件，所以可以赋值
     configure = jsonDoc.object();
 }
 
-void Controller::initConfigureFile()
+void Controller::initConfigFile()
 {
-    QJsonObject jsonObject;
 
-    jsonObject =  getDefaultSettingJson();
-
-    QJsonDocument jsonDocument(jsonObject);
-
-    QString filePath = getConfigureFilePath();
-    QFile file(filePath);
-    // 打开文件以进行写入
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        QMessageBox::critical(nullptr, "检测到错误", (QString)"请打开程序目录，删除configure文件后重新运行本程序, error:" + file.errorString());
+    QJsonObject config = getDefaultConfigJson();
+    QString configPath = getConfigPath();
+    QJsonDocument configDoc(config);
+    QFile configFile(configPath);
+    if (!configFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QMessageBox::critical(nullptr, "检测到错误", (QString)"请打开程序目录，删除[Config.json]文件后重新运行本程序, error:" + configFile.errorString());
         exit(1);
     }
-    // 将JSON文档写入文件
-    file.write(jsonDocument.toJson());
-    // 关闭文件
-    file.close();
+    configFile.write(configDoc.toJson());
+    configFile.close();
 }
 
 bool Controller::startProcessWithElevation(const std::wstring &programPath, const std::wstring &workingDirectory)
@@ -137,45 +131,44 @@ bool Controller::startProcessNormally(const std::wstring &programPath, const std
 
 void Controller::init()
 {
-    loadConfigure();
+    loadConfigFile();
     //根据加载的配置来初始化程序
 
     InitProgram& init = InitProgram::getInstance();
+    Database& db = Database::getInstance();
 
-    SettingWindowConfigure classConfig = buildClassWithJson(configure);
+    SettingWindowConfigure config = buildClassWithJson(configure);
 
-    uiController.initUI(classConfig);
+    uiController.initUI(config);
 
     ChineseConvertPinyin& pinyin = ChineseConvertPinyin::getInstance();
     pinyin.init();
 
     init.clearStore();
 
-    init.initCustomPath();
-
-    if (classConfig.isIgnoreUninstallApp) {
-        Database& db = Database::getInstance();
-        db.addForbiddenName(L"卸载");
-        db.addForbiddenName(L"uninstall");
+    for (const auto& i : config.keyFilters) {
+        db.addKeyFilter(i.key.toStdWString(), i.stableBias);
     }
 
-    if (classConfig.isSearchUWP) {
+    init.initCustomPath(config.bannedPaths, config.searchPaths);
+
+    if (config.isSearchUWP) {
         init.initUWPProgram();
     }
-    if (classConfig.isSearchStartMenu) {
+    if (config.isSearchStartMenu) {
         init.initProgramWithStartMenu();
     }
-    if (classConfig.isSearchRegistry) {
+    if (config.isSearchRegistry) {
         init.initProgramWithRegistery();
     }
-    if (classConfig.isSearchProgramFile) {
+    if (config.isSearchProgramFile) {
         init.initProgramWithProgramFileDir();
     }
-    if (classConfig.isPreLoadResource) {
+    if (config.isPreLoadResource) {
         uiController.preLoadProgramIcon();
     }
 
-    setAutoStart(classConfig.isAutoStart);
+    setAutoStart(config.isAutoStart);
 
     refreshIndexedApp();
 }
@@ -263,12 +256,12 @@ void Controller::saveSetting(SettingWindowConfigure configure)
 
     QJsonDocument jsonDocument(json);
 
-    QString filePath = getConfigureFilePath();
+    QString filePath = getConfigPath();
 
     QFile file(filePath);
     // 打开文件以进行写入
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        QMessageBox::critical(nullptr, "检测到错误", "请打开程序目录，删除configure文件后重新运行本程序");
+        QMessageBox::critical(nullptr, "检测到错误", "请打开程序目录，删除[Config.json]文件后重新运行本程序");
         exit(1);
     }
     // 将JSON文档写入文件

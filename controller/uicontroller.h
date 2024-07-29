@@ -17,7 +17,6 @@ public:
     void hide();
 
     void preLoadProgramIcon();
-
     void updateResultFrame(bool isEmptyText);
 
     void initProgramIcon();

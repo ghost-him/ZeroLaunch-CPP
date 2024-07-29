@@ -44,9 +44,20 @@ public:
 
     void clearIndexedAppTable();
 
-    void addIndexedAppItem(QString programName, bool isUWPApp, int staticBias, QString programPath);
+    void addIndexedAppItem(QString programName, bool isUWPApp, int stableBias, QString programPath);
 
     void adjustIndexedAppTable();
+
+
+    void clearKeyFilterTable();
+    void addkeyFilterItem(const QString& programName, double stableBias, const QString& note);
+
+    void clearSearchList();
+    void addSearchListItem(const QString& searchPath);
+
+    void clearBannedList();
+    void addBannedListItem(const QString& bannedPath);
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -79,6 +90,10 @@ private slots:
     void on_btnAddBannedItem_clicked();
 
     void on_btnDelBannedItem_clicked();
+
+    void on_btnIgnoreUnstallApp_clicked();
+
+    void on_btnIgnoreHelpApp_clicked();
 
 private:
     explicit SettingWindow(QWidget *parent = nullptr);

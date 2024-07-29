@@ -18,11 +18,7 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     if (isExist(compareName))
         return ;
 
-    // 检测是否是有效的名字
-    if (!isValidName(compareName)) {
-        // qDebug() << compareName << "++++++++++++++++++++++++++++++++++++++++++++";
-        return ;
-    }
+    double stableBias = getStableBias(compareName) + stableLevel;
 
     // 将中文转为拼音
     ChineseConvertPinyin& converter = ChineseConvertPinyin::getInstance();
@@ -49,7 +45,7 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
         .programPath = programPath,
         .iconPath = iconPath,
         .compatibility = 0,
-        .stableBias = stableLevel,
+        .stableBias = stableBias,
         .launchTime = 0,
         .isUWPApp = isUWPApp,
         .maxNameLength = maxNameLength,
@@ -223,6 +219,17 @@ void Database::debugProgramNode()
     }
 }
 
+double Database::getStableBias(const std::wstring &key)
+{
+    double result = 0;
+    for (const auto& i : keyFilters) {
+        if (key.find(i.first) != std::wstring::npos) {
+            result += i.second;
+        }
+    }
+    return result;
+}
+
 std::wstring Database::extractInitials(const std::wstring &input)
 {
     std::wstring result;
@@ -235,16 +242,6 @@ std::wstring Database::extractInitials(const std::wstring &input)
         }
     }
     return result;
-}
-
-bool Database::isValidName(const std::wstring &s)
-{
-    for (const auto& i : forbiddenNames) {
-        if (s.find(i) != std::wstring::npos) {
-            return false;
-        }
-    }
-    return true;
 }
 
 std::wstring Database::removeStringSpace(const std::wstring &str)
@@ -280,9 +277,10 @@ void Database::clearProgramInfo()
 {
     programs.clear();
     cache.clear();
+    keyFilters.clear();
 }
 
-void Database::addForbiddenName(const std::wstring &name)
+void Database::addKeyFilter(const std::wstring &key, double stableBias)
 {
-    forbiddenNames.push_back(name);
+    keyFilters.push_back({key, stableBias});
 }
