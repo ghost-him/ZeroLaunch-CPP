@@ -205,8 +205,12 @@ double Database::calculateCompatibility(const ProgramNode &node, const std::wstr
 double Database::calculateKMP(const std::wstring &compareName, const std::wstring &inputValue)
 {
     double ret { 0 };
-    if (compareName.starts_with(inputValue)) {
-        ret = inputValue.size();
+    for (int i = 0; i < compareName.size() && i < inputValue.size(); i ++) {
+        if (compareName[i] == inputValue[i]) {
+            ret ++;
+        } else {
+            break;
+        }
     }
     return ret;
 }
