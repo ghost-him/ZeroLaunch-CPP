@@ -20,7 +20,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="programSetting">
       <attribute name="title">
@@ -109,7 +109,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,1,8">
          <item>
-          <widget class="QSpinBox" name="spRefreshDB">
+          <widget class="QSpinBox" name="spReloadTime">
            <property name="minimum">
             <number>5</number>
            </property>

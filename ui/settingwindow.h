@@ -11,6 +11,7 @@ class SettingWindow;
 class NoToolTipFilter;
 }
 
+class QTimer;
 class QStandardItemModel;
 class QItemSelectionModel;
 
@@ -99,6 +100,8 @@ private:
     explicit SettingWindow(QWidget *parent = nullptr);
     ~SettingWindow();
 
+    void startAutoReloadTime(QTime millisecond);
+
 
     Ui::SettingWindow *ui;
 
@@ -106,9 +109,7 @@ private:
     QStandardItemModel* keyFilterItemModel;
     QItemSelectionModel* keyFilterSelectModel;
     SpinBoxDelegate* spinBoxDelegate;
-
     int nextRow {0};
-
 
 };
 

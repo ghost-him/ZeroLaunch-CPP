@@ -5,6 +5,8 @@
 #include "../ui/settingwindow.h"
 #include <QJsonObject>
 #include "uicontroller.h"
+#include <memory>
+#include <QTimer>
 class Controller
 {
 public:
@@ -48,6 +50,8 @@ private:
     void refreshIndexedApp();
 
     QJsonObject configure;
+
+    std::unique_ptr<QTimer>(autoReloadConfig);
 };
 
 #endif // CONTROLLER_H

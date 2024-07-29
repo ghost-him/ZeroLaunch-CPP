@@ -37,6 +37,7 @@ QJsonObject getDefaultConfigJson() {
     jsonObject["searchProgramFile"] = false;
     jsonObject["preLoadResource"] = false;
     jsonObject["resultItemNumber"] = 4;
+    jsonObject["autoReloadTime"] = 30;
     jsonObject["searchBarPlaceholderText"] = "Hello, ZeroLaunch!";
     jsonObject["resultFrameEmptyText"] = "当前搜索无结果";
     jsonObject["searchUWP"] = true;
@@ -96,6 +97,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     json["searchBarPlaceholderText"] = config.searchBarPlaceholderText;
     json["resultFrameEmptyText"] = config.resultFrameEmptyText;
     json["searchUWP"] = config.isSearchUWP;
+    json["autoReloadTime"] = config.autoReloadTime;
 
     QJsonArray bannedItems;
     for (const auto& i : config.bannedPaths) {
@@ -135,6 +137,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     ret.searchBarPlaceholderText = json["searchBarPlaceholderText"].toString();
     ret.resultFrameEmptyText = json["resultFrameEmptyText"].toString();
     ret.isSearchUWP = json["searchUWP"].toBool();
+    ret.autoReloadTime = json["autoReloadTime"].toInt();
 
     QJsonArray bannedItems = json["bannedPaths"].toArray();
     for (const auto& i : bannedItems) {

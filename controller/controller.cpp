@@ -43,6 +43,11 @@ Controller::Controller() {
         this->refreshIndexedApp();
     });
 
+    autoReloadConfig = std::make_unique<QTimer>();
+    QObject::connect(autoReloadConfig.get(), &QTimer::timeout, [this](){
+        qDebug() << "auto reload config";
+        this->init();
+    });
 }
 
 void Controller::loadConfigFile()
@@ -171,6 +176,9 @@ void Controller::init()
     setAutoStart(config.isAutoStart);
 
     refreshIndexedApp();
+    // x min = x * 60 * 1000 ms
+    qDebug() << "start count time: " << config.autoReloadTime;
+    autoReloadConfig->start(config.autoReloadTime * 1000 * 60);
 }
 
 void Controller::launchSelectedProgram()

@@ -23,6 +23,7 @@ struct SettingWindowConfigure {
     bool isSearchProgramFile;
     bool isSearchRegistry;
     int resultItemNumber;
+    int autoReloadTime;
     QString searchBarPlaceholderText;
     QString resultFrameEmptyText;
     bool isSearchUWP;

@@ -70,7 +70,6 @@ SettingWindow::SettingWindow(QWidget *parent)
     QStringList indexedAppHeaders;
     indexedAppHeaders << "程序名" << "是否为UWP应用" << "固定偏移值" << "程序路径";
     ui->tableIndexedApp->setHorizontalHeaderLabels(indexedAppHeaders);
-
 }
 
 SettingWindow::~SettingWindow()
@@ -90,6 +89,7 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->LEPlaceholderText->setText(config.searchBarPlaceholderText);
     ui->LEEmptyText->setText(config.resultFrameEmptyText);
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
+    ui->spReloadTime->setValue(config.autoReloadTime);
 }
 
 void SettingWindow::show()
@@ -197,6 +197,7 @@ void SettingWindow::on_btnConfirm_clicked()
     configure.searchBarPlaceholderText = ui->LEPlaceholderText->text();
     configure.resultFrameEmptyText = ui->LEEmptyText->text();
     configure.isSearchUWP = ui->boxSearchUWP->isChecked();
+    configure.autoReloadTime = ui->spReloadTime->value();
 
     for (int i = 0; i < ui->bannedList->count(); i ++) {
         QListWidgetItem* item = ui->bannedList->item(i);
