@@ -27,6 +27,8 @@
 
 ![image-20240707234524868](https://raw.githubusercontent.com/ghost-him/ZeroLaunch-CPP/main/assets/setting.png)
 
+设置界面的展示图可在这里看到：[设置界面展示](https://github.com/ghost-him/ZeroLaunch-CPP/blob/main/doc/%E8%AE%BE%E7%BD%AE%E7%95%8C%E9%9D%A2%E5%B1%95%E7%A4%BA.md)
+
 ## 快速使用
 
 双击`ZeroLaunch.exe`即可运行程序。程序运行在系统的托盘中，右键图标可以打开二级菜单。
@@ -100,6 +102,20 @@ C:\users\ghost\desktop\root folder
 如果不想要搜索某一文件夹，则可以将该文件夹的路径写入。不搜索路径要求：搜索路径的前缀与不搜索路径完全匹配。
 
 以上例为例：如果写入了 `C:\users\ghost\desktop`，则不会遍历该路径，而写入了 `C:\users\ghost\desktop\root folder\folder 1` 时，只会遍历 `root folder` 下的所有文件与除了 `folder 1` 之外的所有的子文件夹下的所有的文件。
+
+#### 关键字过滤器
+
+通过使用关键字过滤器，你可以自定义目标应用程序的出现的权重。
+
+每一个应用程序都有一个值，叫 `compatibility` ，这个值的意思为：当前程序与用户搜索的匹配度。而程序中显示出来的程序则是所有程序中 `compatibility` 最大的几个。
+
+而关键字过滤器可以自定义包含关键字的程序的 `compatibility`。
+
+关键字过滤器的计算方式如下：当一个程序的名字中出现了一个关键字，则其 `compatibility` 会加上这个关键字对应的值（可正可负）。如果出现了多个关键字，则会累加。
+
+案例：可以看到程序中有默认关键字过滤器： `卸载` 与 `uninstall`，对应的值都为 `-5000`。因此，拥有这个关键字的程序的 `compatibility` 都会减 `5000`，最终会使得这些程序永远不会出现在搜索结果框中。
+
+推荐的范围：`[-10.0, 10.0]`。
 
 #### 自定义搜索栏提示文字
 
