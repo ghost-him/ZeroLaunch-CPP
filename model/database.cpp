@@ -145,6 +145,7 @@ double Database::calculateStringCompatibility(const std::wstring& compareName, c
 {
     double score = calculateEditDistance(compareName, inputName);
     score = score * calculateWeight((double) inputName.size() / compareName.size());
+    score = score + calculateKMP(compareName, inputName);
     return score;
 }
 
@@ -199,6 +200,15 @@ double Database::calculateCompatibility(const ProgramNode &node, const std::wstr
         result = std::max(result, score);
     }
     return result;
+}
+
+double Database::calculateKMP(const std::wstring &compareName, const std::wstring &inputValue)
+{
+    double ret { 0 };
+    if (compareName.starts_with(inputValue)) {
+        ret = inputValue.size();
+    }
+    return ret;
 }
 
 void Database::debugProgramNode()
