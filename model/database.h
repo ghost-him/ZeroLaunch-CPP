@@ -48,7 +48,7 @@ public:
 
     void insertProgramInfo(const std::wstring& programName, const std::wstring& programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp);
 
-    void updateScores(std::wstring inputName);
+    void updateScores(const std::wstring& inputValue);
 
     const std::vector<ProgramNode>& getProgramsFile();
 
@@ -69,8 +69,8 @@ private:
 
     std::vector<std::pair<std::wstring, double>> keyFilters;
 
-    std::wstring& tolower(std::wstring& other);
-    // 该函数会去除程序名字中的版本号与括号中的内容，同时还会转换为小写的名字
+    std::wstring tolowerString(const std::wstring& other);
+    // 该函数会去除程序名字中的版本号与括号中的内容
     std::wstring preprocess(const std::wstring& inputText);
 
     double calculateStringCompatibility(const std::wstring& compareName, const std::wstring& inputName);
@@ -91,6 +91,7 @@ private:
 
     std::wstring removeStringSpace(const std::wstring& str);
 
+    std::wstring getUppercaseLetters(const std::wstring& str);
 };
 
 #endif // DATABASE_H

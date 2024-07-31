@@ -13,7 +13,11 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
 {
     const std::wstring& showName = programName;
 
-    std::wstring compareName = preprocess(showName);
+    std::wstring filteredName = preprocess(showName);
+
+    std::wstring uppercaseLetters = tolowerString(getUppercaseLetters(filteredName));
+
+    std::wstring compareName = tolowerString(filteredName);
     if (isExist(compareName))
         return ;
 
@@ -30,13 +34,16 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     std::wstring firstLatterName = extractInitials(splitString);
     std::wstring pinyin = removeStringSpace(splitString);
 
+
     std::vector<std::wstring> compareNames{
         compareName,
         pinyin,
         firstLatterName,
+        uppercaseLetters,
     };
 
     size_t maxNameLength = std::max({compareName.size(), pinyin.size(), firstLatterName.size()});
+
 
     ProgramNode app {
         .showName = showName,
@@ -53,10 +60,10 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
     programs.emplace_back(app);
 }
 
-void Database::updateScores(std::wstring inputName)
+void Database::updateScores(const std::wstring& inputValue)
 {
     //qDebug() << "update score name: " << inputName;
-    tolower(inputName);
+    std::wstring inputName = tolowerString(inputValue);
     for (auto& app : programs) {
         double compatibility = calculateCompatibility(app, inputName);
         compatibility += app.stableBias;
@@ -81,14 +88,13 @@ bool Database::isExist(const std::wstring &key)
 }
 
 
-std::wstring& Database::tolower(std::wstring &other)
+std::wstring Database::tolowerString(const std::wstring &other)
 {
-    for (auto& i : other) {
-        if (std::iswupper(i)) {
-            i = std::towlower(i);
-        }
+    std::wstring result;
+    for (const auto& i : other) {
+        result.push_back(std::towlower(i));
     }
-    return other;
+    return result;
 }
 
 std::wstring Database::preprocess(const std::wstring &inputText)
@@ -135,8 +141,6 @@ std::wstring Database::preprocess(const std::wstring &inputText)
     while(ret.size() && (*ret.rbegin()) == L' ') {
         ret.pop_back();
     }
-
-    tolower(ret);
     return ret;
 }
 
@@ -262,6 +266,17 @@ std::wstring Database::removeStringSpace(const std::wstring &str)
     std::wstring result;
     for (auto& i : str) {
         if (i != L' ') {
+            result.push_back(i);
+        }
+    }
+    return result;
+}
+
+std::wstring Database::getUppercaseLetters(const std::wstring &str)
+{
+    std::wstring result;
+    for (const auto& i : str) {
+        if (iswupper(i)) {
             result.push_back(i);
         }
     }
