@@ -187,9 +187,9 @@ void Controller::launchSelectedProgram()
     int index = resultFrame.getCurrentItemIndex();
 
     if (SearchBar::getInstance().text().isEmpty()) {
-        uiController.hide();
+        uiController.hideSearchBar();
     } else {
-        uiController.hide();
+        uiController.hideSearchBar();
         runProgramWithIndex(index);
     }
 }
@@ -228,6 +228,11 @@ void Controller::inputText(const QString &text)
         db.updateScores(text.toStdWString());
     }
     uiController.updateResultFrame(text.isEmpty());
+}
+
+void Controller::showSettingWindow()
+{
+    uiController.showSettingWindow();
 }
 void Controller::setAutoStart(bool isAutoStart)
 {

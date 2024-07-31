@@ -13,8 +13,8 @@ public:
 
     void initUI(const SettingWindowConfigure& configure);
 
-    void show();
-    void hide();
+    void showSearchBar();
+    void hideSearchBar();
 
     void preLoadProgramIcon();
     void updateResultFrame(bool isEmptyText);
@@ -23,7 +23,8 @@ public:
 
     void clearIconCache();
 
-    void openSettingWindow();
+    void showSettingWindow();
+    void hideSettingWindow();
 
     void refreshIndexedApp();
 

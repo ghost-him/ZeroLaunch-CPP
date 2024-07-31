@@ -6,19 +6,11 @@
 #include <QMenu>
 #include <QPropertyAnimation>
 #include <QPalette>
+#include <QAction>
+#include "uiutils.h"
 
 HWND searchBar_hwnd;
-/*
-void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (event == EVENT_SYSTEM_FOREGROUND) {
-        // 检测到前台窗口变化
-        if (hwnd != searchBar_hwnd) {
-            SearchBar& bar = SearchBar::getInstance();
-            bar.hide();
-        }
-    }
-}
-*/
+
 SearchBar::SearchBar() {
     searchBar_hwnd = (HWND)winId();
     setWindowFlags(Qt::FramelessWindowHint | Qt::Tool); // 不显示任务栏图标
@@ -62,19 +54,6 @@ SearchBar::SearchBar() {
                             "border-radius: 10px;"  // 设置圆角半径
                             "padding: 8px;"
                         "}"));
-
-    // 设置事件钩子
-/*
-    HWINEVENTHOOK hWinEventHook = SetWinEventHook(
-        EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND,
-        NULL, WinEventProc,
-        0, 0,
-        WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
-
-    if (!hWinEventHook) {
-        qDebug() << "Failed to set event hook." ;
-    }
-*/
 }
 
 void SearchBar::focusOnSearchBar()
@@ -85,34 +64,21 @@ void SearchBar::focusOnSearchBar()
 void SearchBar::contextMenuEvent(QContextMenuEvent *event)
 {
     // 创建新的上下文菜单
-    std::shared_ptr<QMenu> menu = std::make_shared<QMenu>(new QMenu(this));
-    menu->setAttribute(Qt::WA_TranslucentBackground);
-    // 添加默认的中文菜单项
-    QAction *undoAction = menu->addAction(tr("撤销"));
-    QAction *redoAction = menu->addAction(tr("重做"));
-    menu->addSeparator();
-    QAction *cutAction = menu->addAction(tr("剪切"));
-    QAction *copyAction = menu->addAction(tr("复制"));
-    QAction *pasteAction = menu->addAction(tr("粘贴"));
-    menu->addSeparator();
-    QAction *deleteAction = menu->addAction(tr("删除"));
-    QAction *selectAllAction = menu->addAction(tr("全选"));
-    menu->addSeparator();
-    // 添加自定义菜单项
-    QAction *customAction = menu->addAction(tr("打开设置"));
+    QMenu menu(this);
+    menu.setAttribute(Qt::WA_TranslucentBackground);
 
-    // 连接默认菜单项的动作
-    connect(undoAction, &QAction::triggered, this, &QLineEdit::undo);
-    connect(redoAction, &QAction::triggered, this, &QLineEdit::redo);
-    connect(cutAction, &QAction::triggered, this, &QLineEdit::cut);
-    connect(copyAction, &QAction::triggered, this, &QLineEdit::copy);
-    connect(pasteAction, &QAction::triggered, this, &QLineEdit::paste);
-    connect(deleteAction, &QAction::triggered, this, &QLineEdit::del);
-    connect(selectAllAction, &QAction::triggered, this, &QLineEdit::selectAll);
-    // 连接自定义菜单项的动作
-    connect(customAction, &QAction::triggered, this, &SearchBar::openSettingWindow);
+    // 添加自定义菜单项
+
+    QAction* openSettingAction = createOpenSettingAction(&menu);
+    QAction* reloadSettingAction = createReloadSettingAction(&menu);
+    QAction* showHelpAction = createShowHelpAction(&menu);
+
+    menu.addAction(openSettingAction);
+    menu.addAction(reloadSettingAction);
+    menu.addAction(showHelpAction);
+
     // 显示菜单
-    menu->exec(event->globalPos());
+    menu.exec(event->globalPos());
 }
 
 void SearchBar::keyPressEvent(QKeyEvent *event)
@@ -154,13 +120,6 @@ bool SearchBar::nativeEvent(const QByteArray &eventType, void *message, qintptr 
     }
     return QLineEdit::nativeEvent(eventType, message, result);
 }
-
-void SearchBar::openSettingWindow()
-{
-    emit hideProgram();
-    emit sg_openSettingWindow();
-}
-
 
 void SearchBar::pressESC()
 {

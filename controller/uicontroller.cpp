@@ -15,10 +15,7 @@ UIController::UIController() {
     QObject::connect(&searchBar, &SearchBar::selectForwardItem, &resultFrame, &ResultFrame::selectForwardItem);
     QObject::connect(&searchBar, &SearchBar::selectBackwardItem, &resultFrame, &ResultFrame::selectBackwardItem);
     QObject::connect(&searchBar, &SearchBar::hideProgram, [this](){
-        this->hide();
-    });
-    QObject::connect(&searchBar, &SearchBar::sg_openSettingWindow, [this](){
-        this->openSettingWindow();
+        this->hideSearchBar();
     });
 
     // 初始化键盘钩子
@@ -76,15 +73,16 @@ void UIController::initUI(const SettingWindowConfigure &configure)
     updateResultFrame(true);
 }
 
-void UIController::show()
+void UIController::showSearchBar()
 {
+    hideSettingWindow();
     SearchBar& searchBar = SearchBar::getInstance();
     ResultFrame& resultFrame = ResultFrame::getInstance();
     searchBar.show();
     resultFrame.show();
 }
 
-void UIController::hide()
+void UIController::hideSearchBar()
 {
     SearchBar& searchBar = SearchBar::getInstance();
     ResultFrame& resultFrame = ResultFrame::getInstance();
@@ -117,10 +115,16 @@ void UIController::clearIconCache()
     iconCache.clear();
 }
 
-void UIController::openSettingWindow()
+void UIController::showSettingWindow()
 {
+    hideSearchBar();
     SettingWindow& settingWindow = SettingWindow::getInstance();
     settingWindow.show();
+}
+
+void UIController::hideSettingWindow() {
+    SettingWindow& settingWindow = SettingWindow::getInstance();
+    settingWindow.hide();
 }
 
 void UIController::refreshIndexedApp()

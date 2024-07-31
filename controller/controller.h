@@ -31,6 +31,8 @@ public:
 
     void inputText(const QString& text);
 
+    void showSettingWindow();
+
     ~Controller() = default;
 private:
     UIController uiController;
