@@ -105,7 +105,7 @@ void InitProgram::initTargetDirectory(const std::wstring &path, unsigned int dep
                     // 获得该程序的等级
                     int level = level_bias;
                     // 获得该程序的名字
-                    std::wstring programName = entry.path().filename();
+                    std::wstring programName = entry.path().stem();
                     // 获取该程序的目录
                     std::wstring programPath = entry.path().wstring();
 

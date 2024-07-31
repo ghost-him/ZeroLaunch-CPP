@@ -11,8 +11,7 @@ Database::Database() {}
 
 void Database::insertProgramInfo(const std::wstring &programName, const std::wstring &programPath, const std::wstring& iconPath, int stableLevel, bool isUWPApp)
 {
-    int t = programName.find_last_of(L".");
-    std::wstring showName = programName.substr(0, t);
+    const std::wstring& showName = programName;
 
     std::wstring compareName = preprocess(showName);
     if (isExist(compareName))
