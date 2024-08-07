@@ -49,11 +49,15 @@ SearchBar::SearchBar() {
 
     this->setStyleSheet(QString(
                         "QLineEdit{"
-                            "background-color: white;"
+                            "background-color: %1;"
+                            "color: %2;"
                             "border: 1px solid gray;"
                             "border-radius: 10px;"  // 设置圆角半径
                             "padding: 8px;"
-                        "}"));
+                            "}").arg(
+                                Color::backgroundColor(),
+                                Color::textColor()
+                                ));
 }
 
 void SearchBar::focusOnSearchBar()

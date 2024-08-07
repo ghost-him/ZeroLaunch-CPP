@@ -6,6 +6,7 @@
 #include "../controller/uicontroller.h"
 #include "searchbar.h"
 #include <QMessageBox>
+#include "singleapplication.h"
 
 QAction* createExitAction(QObject *parent)
 {
@@ -61,4 +62,63 @@ ESC：当搜索栏中有文字时，则清屏；没有文字时，则隐藏搜�
 )");
     });
     return showHelp;
+}
+
+QPalette* Color::palette = nullptr;
+
+bool Color::isDarkMode()
+{
+    if (!palette) {
+        palette = new QPalette(SingleApplication::palette());
+    }
+
+
+    static std::optional<bool> ret;
+    if (ret.has_value()) {
+        return ret.value();
+    }
+#ifdef Q_OS_WIN
+    HKEY hKey;
+    DWORD type;
+    DWORD value;
+    DWORD size = sizeof(value);
+
+    // 打开注册表项
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"), 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+    {
+        // 读取 AppsUseLightTheme 值
+        if (RegQueryValueEx(hKey, TEXT("AppsUseLightTheme"), NULL, &type, reinterpret_cast<LPBYTE>(&value), &size) == ERROR_SUCCESS)
+        {
+            RegCloseKey(hKey);
+            ret = static_cast<bool>(value == 0);
+        }
+        RegCloseKey(hKey);
+    }
+#endif
+    return ret.value_or(false); // 如果无法确定，默认返回false（非深色模式）
+}
+
+QString Color::textColor()
+{
+    return isDarkMode() ? "#E0E0E0" : "black";
+}
+
+QString Color::selectedBackgroundColor()
+{
+    return  isDarkMode() ? "#3F3F46" : palette->color(QPalette::Highlight).name();
+}
+
+QString Color::selectedTextColor()
+{
+    return isDarkMode() ? "#FFFFFF" : palette->color(QPalette::HighlightedText).name();
+}
+
+QString Color::backgroundColor()
+{
+    return isDarkMode() ? "#2D2D30" : "white";
+}
+
+QString Color::borderColor()
+{
+    return isDarkMode() ? "#555555" : "gray";
 }

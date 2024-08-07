@@ -8,6 +8,7 @@
 #include <QScrollBar>
 #include <QPropertyAnimation>
 #include <QSize>
+#include "uiutils.h"
 
 ResultFrame::ResultFrame(QWidget *parent)
     : QWidget(parent)
@@ -55,32 +56,28 @@ ResultFrame::ResultFrame(QWidget *parent)
             "}"
             "QListWidget {"
             "   border-radius: 10px;"         // 设置 QListWidget 的圆角边框
-            "   background-color: white;" // 设置背景色为透明
-            "   border: 1px solid gray;"
+            "   background-color: %1;" // 设置背景色为透明
+            "   border: 1px solid %2;"
             "}"
             "QListWidget::item:selected {"
-            "   background-color: %1;"        // 设置选中项的背景颜色
-            "   color: %2;"                   // 设置选中项的文字颜色
+            "   background-color: %3;"        // 设置选中项的背景颜色
+            "   color: %4;"                   // 设置选中项的文字颜色
             "   border-radius: 10px;"
             "   font-weight: bold;"           // 设置选中项的文字加粗
-            "}"
-            "QListWidget::item:selected:!active {"
-            "   background-color: %3;"        // 设置非活动状态下选中项的背景颜色
-            "   color: %2;"                   // 设置非活动状态下选中项的文字颜色
-            "   border-radius: 10px;"
-            "   font-weight: bold;"           // 设置非活动状态下选中项的文字加粗
             "}"
             "QListWidget::item {"
             "   padding-left: 4px;"          // 设置左侧填充，使标志更宽
             "   padding-right: 4px;"         // 设置右侧填充，使标志更宽
             "   border-radius: 10px;"
-            "   color: black;"               // 设置普通项的文字颜色
-            "   background-color: white;"    // 设置普通项的背景颜色
+            "   color: %5;"               // 设置普通项的文字颜色
+            "   background-color: %1;"    // 设置普通项的背景颜色
             "}"
             ).arg(
-                palette.color(QPalette::Highlight).name(),          // 获取系统主题的高亮颜色
-                palette.color(QPalette::HighlightedText).name(),    // 获取系统主题的高亮文字颜色
-                palette.color(QPalette::Inactive, QPalette::Highlight).name()  // 获取系统主题的非活动状态高亮颜色
+                Color::backgroundColor(),
+                Color::borderColor(),
+                Color::selectedBackgroundColor(),
+                Color::selectedTextColor(),
+                Color::textColor()
                 ));
 }
 
