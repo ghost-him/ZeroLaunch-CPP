@@ -61,6 +61,12 @@
 3. 使用`qt creator`打开该项目。
 4. 编译，编译后的程序存放在`${CMAKE_BINARY_DIR}/program`目录下。
 
+### 报错及解决办法
+
+如果出现：`msvcp140.dll`或`vcruntime140.dll`或`vcruntime140_1.dll`库的缺失情况，可以去微软官网下载并安装对应的运行库：[microsoft](https://learn.microsoft.com/zh-cn/cpp/windows/latest-supported-vc-redist?view=msvc-170)。
+
+找到 `最新的 Microsoft Visual C++ 可再发行程序包版本` 这一标题下的表格，选择好对应的体系结构安装即可。
+
 ## 软件特点
 
 ### 搜索算法
