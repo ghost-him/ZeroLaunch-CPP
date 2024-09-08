@@ -46,5 +46,6 @@ int main(int argc, char *argv[])
     trayIcon.setIcon(QIcon(":/icon/trayIcon.svg"));
     trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
+    //Database::getInstance().testCompareAlgorithm(L"ea");
     return app.exec();
 }

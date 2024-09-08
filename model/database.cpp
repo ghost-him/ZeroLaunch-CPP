@@ -279,6 +279,10 @@ std::wstring Database::getUppercaseLetters(const std::wstring &str)
         if (iswupper(i)) {
             result.push_back(i);
         }
+        if (!isascii(i)) {
+            result.clear();
+            break;
+        }
     }
     return result;
 }

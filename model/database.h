@@ -83,6 +83,7 @@ private:
 
     double calculateKMP(const std::wstring& compareName, const std::wstring& inputValue);
 
+
     void debugProgramNode();
 
     double getStableBias(const std::wstring& key);
