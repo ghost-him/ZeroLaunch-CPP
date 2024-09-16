@@ -33,6 +33,8 @@ public:
 
     void showSettingWindow();
 
+    void showSearchBar();
+
     ~Controller() = default;
 private:
     UIController uiController;

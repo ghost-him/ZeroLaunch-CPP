@@ -41,11 +41,17 @@ int main(int argc, char *argv[])
     trayMenu.addAction(showHelpAction);
     trayMenu.addAction(exitAction);
 
-
     trayIcon.setContextMenu(&trayMenu);
     trayIcon.setIcon(QIcon(":/icon/trayIcon.svg"));
     trayIcon.setToolTip(getProgramVersion());
     trayIcon.show();
+
+    QObject::connect(&trayIcon, &QSystemTrayIcon::activated, [&](QSystemTrayIcon::ActivationReason reason){
+        if (reason == QSystemTrayIcon::DoubleClick) {
+            controller.showSearchBar();
+        }
+    });
+
     //Database::getInstance().testCompareAlgorithm(L"ea");
     return app.exec();
 }

@@ -234,6 +234,11 @@ void Controller::showSettingWindow()
 {
     uiController.showSettingWindow();
 }
+
+void Controller::showSearchBar()
+{
+    uiController.showSearchBar();
+}
 void Controller::setAutoStart(bool isAutoStart)
 {
     QString strApplicationName = QApplication::applicationName(); // 获取应用名称
