@@ -5,6 +5,8 @@
 #include "../ui/settingwindow.h"
 #include "windowhook.h"
 
+class QHotkey;
+
 class UIController
 {
 
@@ -32,7 +34,7 @@ public:
 
     ~UIController() = default;
 private:
-
+    std::shared_ptr<QHotkey> hotkey;
     QPixmap addMarginToPixmap(const QPixmap &originalPixmap, int margin);
 
 

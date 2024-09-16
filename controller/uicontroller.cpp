@@ -3,10 +3,10 @@
 #include "../ui/resultframe.h"
 #include "../ui/searchbar.h"
 #include "../model/database.h"
-#include "keyboardhook.h"
 #include "utils.h"
 #include <QtSvg/QSvgRenderer>
 #include <QPainter>
+#include <qhotkey.h>
 
 UIController::UIController() {
     SearchBar& searchBar = SearchBar::getInstance();
@@ -19,15 +19,16 @@ UIController::UIController() {
     });
 
     // 初始化键盘钩子
-    KeyboardHook& hook = KeyboardHook::getInstance();
-    hook.startHook({}, {{ VK_SPACE, VK_MENU }});
-    hook.setCallback([](){
+    hotkey = std::make_shared<QHotkey>(QKeySequence("Alt+Space"), true, nullptr);
+
+    QObject::connect(hotkey.get(), &QHotkey::activated, [&](){
         SearchBar& searchBar = SearchBar::getInstance();
         ResultFrame& resultFrame = ResultFrame::getInstance();
 
         searchBar.show();
         resultFrame.show();
     });
+
     // 初始化窗口监视器
     WindowHook& windowHook = WindowHook::getInstance();
 

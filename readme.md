@@ -161,5 +161,7 @@ C:\users\ghost\desktop\root folder
 
 * [LaunchyQt](https://github.com/samsonwang/LaunchyQt)：提供了索引 UWP 应用程序的代码。
 
+* [QHotkey](https://github.com/Skycoder42/QHotkey)：提供了全局热键的支持
+
 
 
