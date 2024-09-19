@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #include <QStyleHints>
 #include "ui/uiutils.h"
+#include "model/database.h"
 
 int main(int argc, char *argv[])
 {
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
         }
     });
 
-    //Database::getInstance().testCompareAlgorithm(L"ea");
+    //Database::getInstance().insertProgramInfo(L"PyCharm Community Edition 2024.1.1", L"", L"", 0, false);
+    //Database::getInstance().testCompareAlgorithm(L"commun");
     return app.exec();
 }

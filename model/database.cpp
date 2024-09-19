@@ -157,6 +157,20 @@ double Database::calculateWeight(double inputLen)
     return 3 * std::log2(inputLen + 1);
 }
 
+double Database::calculateStairWeight(double inputLen)
+{
+    double weight = 1;
+    double len = 1;
+    double magnification = 3;
+
+    while (inputLen - len > 1e-5) {
+        inputLen -= len;
+        len += magnification;
+        weight += 1;
+    }
+    return weight;
+}
+
 double Database::calculateEditDistance(const std::wstring &compareName, const std::wstring &inputValue)
 {
     int m = compareName.size();
@@ -208,12 +222,17 @@ double Database::calculateCompatibility(const ProgramNode &node, const std::wstr
 double Database::calculateKMP(const std::wstring &compareName, const std::wstring &inputValue)
 {
     double ret { 0 };
+    // 首字符串匹配
     for (int i = 0; i < compareName.size() && i < inputValue.size(); i ++) {
         if (compareName[i] == inputValue[i]) {
             ret ++;
         } else {
             break;
         }
+    }
+    // 子字符串匹配
+    if (compareName.find(inputValue) != std::wstring::npos) {
+        ret += inputValue.size() ;
     }
     return ret;
 }
