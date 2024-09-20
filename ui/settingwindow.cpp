@@ -58,7 +58,7 @@ SettingWindow::SettingWindow(QWidget *parent)
     ui->tableKeyFilter->verticalScrollBar()->setSingleStep(10);
 
     // 初始化
-    ui->tableIndexedApp->setColumnCount(4);
+    ui->tableIndexedApp->setColumnCount(5);
     ui->tableIndexedApp->setEditTriggers(QAbstractItemView::NoEditTriggers);
     // 设置水平滚动模式为像素级
     ui->tableIndexedApp->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -68,7 +68,7 @@ SettingWindow::SettingWindow(QWidget *parent)
     ui->tableIndexedApp->horizontalScrollBar()->setSingleStep(10);
     ui->tableIndexedApp->verticalScrollBar()->setSingleStep(10);
     QStringList indexedAppHeaders;
-    indexedAppHeaders << "程序名" << "是否为UWP应用" << "固定偏移值" << "程序路径";
+    indexedAppHeaders << "程序名" << "是否为UWP应用" << "固定偏移值" << "打开总次数" << "程序路径";
     ui->tableIndexedApp->setHorizontalHeaderLabels(indexedAppHeaders);
 }
 
@@ -90,6 +90,7 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->LEEmptyText->setText(config.resultFrameEmptyText);
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
     ui->spReloadTime->setValue(config.autoReloadTime);
+    ui->boxEnableStatistics->setChecked(config.isEnableStatictics);
 }
 
 void SettingWindow::show()
@@ -106,11 +107,12 @@ void SettingWindow::clearIndexedAppTable()
     nextRow = 0;
 }
 
-void SettingWindow::addIndexedAppItem(QString programName, bool isUWPApp, int stableBias, QString programPath)
+void SettingWindow::addIndexedAppItem(QString programName, bool isUWPApp, int stableBias, int totalOpenCount, QString programPath)
 {
     QStringList data {programName,
                      isUWPApp? "true": "false",
                      QString::number(stableBias),
+                     QString::number(totalOpenCount),
                      programPath};
 
     if (nextRow == ui->tableIndexedApp->rowCount()) {
@@ -198,6 +200,7 @@ void SettingWindow::on_btnConfirm_clicked()
     configure.resultFrameEmptyText = ui->LEEmptyText->text();
     configure.isSearchUWP = ui->boxSearchUWP->isChecked();
     configure.autoReloadTime = ui->spReloadTime->value();
+    configure.isEnableStatictics = ui->boxEnableStatistics->isChecked();
 
     for (int i = 0; i < ui->bannedList->count(); i ++) {
         QListWidgetItem* item = ui->bannedList->item(i);
@@ -229,30 +232,6 @@ void SettingWindow::on_btnConfirm_clicked()
     // 保存文件
     emit confirmSetting(configure);
 }
-/*
-void SettingWindow::on_btnCustomDir_clicked()
-{
-    QString filePath = getCustomDirectoryPath();
-
-    // 使用QDesktopServices打开该文件
-    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(filePath))) {
-        QMessageBox::warning(nullptr, "Error", "Cannot open file with default application.");
-    }
-
-}
-
-
-void SettingWindow::on_btnBannedDir_clicked()
-{
-    QString filePath = getBannedDirectoryPath();
-
-    // 使用QDesktopServices打开该文件
-    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(filePath))) {
-        QMessageBox::warning(nullptr, "Error", "Cannot open file with default application.");
-    }
-
-}
-*/
 
 void SettingWindow::on_pushButton_clicked()
 {

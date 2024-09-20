@@ -36,6 +36,7 @@ QJsonObject getDefaultConfigJson() {
     jsonObject["searchRegistry"] = false;
     jsonObject["searchProgramFile"] = false;
     jsonObject["preLoadResource"] = false;
+    jsonObject["isEnableStatictics"] = false;
     jsonObject["resultItemNumber"] = 4;
     jsonObject["autoReloadTime"] = 30;
     jsonObject["searchBarPlaceholderText"] = "Hello, ZeroLaunch!";
@@ -98,6 +99,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     json["resultFrameEmptyText"] = config.resultFrameEmptyText;
     json["searchUWP"] = config.isSearchUWP;
     json["autoReloadTime"] = config.autoReloadTime;
+    json["isEnableStatictics"] = config.isEnableStatictics;
 
     QJsonArray bannedItems;
     for (const auto& i : config.bannedPaths) {
@@ -138,6 +140,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     ret.resultFrameEmptyText = json["resultFrameEmptyText"].toString();
     ret.isSearchUWP = json["searchUWP"].toBool();
     ret.autoReloadTime = json["autoReloadTime"].toInt();
+    ret.isEnableStatictics = json["isEnableStatictics"].toBool();
 
     QJsonArray bannedItems = json["bannedPaths"].toArray();
     for (const auto& i : bannedItems) {
@@ -161,7 +164,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
 
 QString getProgramVersion()
 {
-    return "ZeroLaunch 0.7.5";
+    return "ZeroLaunch 0.8";
 }
 
 QString getPinyinConfigPath()
@@ -200,4 +203,18 @@ QJsonObject newBannedItem(const QString &bannedPath)
     QJsonObject ret;
     ret["bannedPath"] = bannedPath;
     return ret;
+}
+
+QString getStatisticJsonPath()
+{
+    return QApplication::applicationDirPath() + "/statictic.json";
+}
+
+QJsonObject getDefaultStaticticjson()
+{
+    QJsonObject obj;
+    QJsonArray arr1, arr2;
+    obj["totalOpenCount"] = arr1;
+    obj["recentOpenProgram"] = arr2;
+    return obj;
 }

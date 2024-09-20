@@ -22,6 +22,7 @@ struct SettingWindowConfigure {
     bool isPreLoadResource;
     bool isSearchProgramFile;
     bool isSearchRegistry;
+    bool isEnableStatictics;
     int resultItemNumber;
     int autoReloadTime;
     QString searchBarPlaceholderText;
@@ -40,6 +41,10 @@ QPixmap getFileIcon(const QString& filePath);
 QJsonObject getDefaultConfigJson();
 
 QString getConfigPath();
+
+QString getStatisticJsonPath();
+
+QJsonObject getDefaultStaticticjson();
 
 QString getPinyinConfigPath();
 

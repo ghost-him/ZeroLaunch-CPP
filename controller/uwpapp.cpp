@@ -32,7 +32,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
             break;
         }
 
-        qDebug() << "UWPApp::getCatalog, succeed to open shell::AppsFolder";
+        //qDebug() << "UWPApp::getCatalog, succeed to open shell::AppsFolder";
 
         CComPtr<IEnumShellItems> enumShellItems;
         if (FAILED(appFolder->BindToHandler(nullptr,
@@ -42,7 +42,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
             break;
         }
 
-        qDebug() << "UWPApp::getCatalog, succeed to bind to handler";
+        //qDebug() << "UWPApp::getCatalog, succeed to bind to handler";
 
         PROPERTYKEY pkLauncherAppState;
         PSGetPropertyKeyFromName(L"System.Launcher.AppState", &pkLauncherAppState);
@@ -57,7 +57,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
         CComHeapPtr<wchar_t> pvs;
         pvs.Allocate(pvslen);
 
-        qDebug() << "UWPApp::getCatalog, begin while loop";
+        //qDebug() << "UWPApp::getCatalog, begin while loop";
         IShellItem* shellItemNext = nullptr;
         while (enumShellItems->Next(1, &shellItemNext, nullptr) == S_OK) {
             CComPtr<IShellItem> shellItem = shellItemNext;
@@ -92,7 +92,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
             CComHeapPtr<wchar_t> name;
             if (SUCCEEDED(shellItem->GetDisplayName(SIGDN_NORMALDISPLAY, &name))) {
                 shortName = QString::fromWCharArray(name);
-                qDebug() << "name: " << shortName;
+                //qDebug() << "name: " << shortName;
             }
 
             PropVariantClear(&pv);
@@ -100,7 +100,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
                 memset(pvs, 0, sizeof(wchar_t) * pvslen);
                 PropVariantToString(pv, pvs, pvslen);
                 fullPath = QString::fromWCharArray(static_cast<wchar_t*>(pvs));
-                qDebug() << " id: " << fullPath;
+                //qDebug() << " id: " << fullPath;
             }
 
             PropVariantClear(&pv);
@@ -108,7 +108,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
                 memset(pvs, 0, sizeof(wchar_t) * pvslen);
                 PropVariantToString(pv, pvs, pvslen);
                 installPath = QString::fromWCharArray(pvs);
-                qDebug() << " install: " << installPath;
+                //qDebug() << " install: " << installPath;
             }
 
             PropVariantClear(&pv);
@@ -116,10 +116,10 @@ std::vector<UWP> UWPAppManager::getUWPApp()
                 memset(pvs, 0, sizeof(wchar_t) * pvslen);
                 PropVariantToString(pv, pvs, pvslen);
                 iconPath = QString::fromWCharArray(pvs);
-                qDebug() << " logo: " << iconPath;
+                //qDebug() << " logo: " << iconPath;
                 iconPath = installPath + QDir::separator() + iconPath;
                 iconPath = validateIconPath(iconPath);
-                qDebug() << " logo(validate): " << iconPath;
+                //qDebug() << " logo(validate): " << iconPath;
             }
 
             UWP uwp{shortName.toStdWString(), fullPath.toStdWString(), iconPath.toStdWString()};
@@ -127,7 +127,7 @@ std::vector<UWP> UWPAppManager::getUWPApp()
 
         }
 
-        qDebug() << "UWPApp::getCatalog, end while loop";
+        //qDebug() << "UWPApp::getCatalog, end while loop";
 
     } while (0);
 

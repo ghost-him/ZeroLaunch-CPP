@@ -132,6 +132,7 @@ void UIController::refreshIndexedApp()
 {
     SettingWindow& settingWindow {SettingWindow::getInstance()};
     Database& db {Database::getInstance()};
+    ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
 
     settingWindow.clearIndexedAppTable();
     auto& files {db.getProgramsFile()};
@@ -139,6 +140,7 @@ void UIController::refreshIndexedApp()
         settingWindow.addIndexedAppItem(QString::fromStdWString(i.showName),
                                         i.isUWPApp,
                                         i.stableBias,
+                                        counter.queryTotalOpenCount(i.programPath),
                                         QString::fromStdWString(i.programPath));
     }
     settingWindow.adjustIndexedAppTable();

@@ -44,6 +44,8 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
 
     size_t maxNameLength = std::max({compareName.size(), pinyin.size(), firstLatterName.size()});
 
+    // 用于统计程序的打开次数
+    ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
 
     ProgramNode app {
         .showName = showName,
@@ -62,11 +64,13 @@ void Database::insertProgramInfo(const std::wstring &programName, const std::wst
 
 void Database::updateScores(const std::wstring& inputValue)
 {
+    ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
     //qDebug() << "update score name: " << inputName;
     std::wstring inputName = tolowerString(inputValue);
     for (auto& app : programs) {
         double compatibility = calculateCompatibility(app, inputName);
         compatibility += app.stableBias;
+        compatibility += counter.queryRecentOpenCount(app.programPath);
         app.compatibility = compatibility;
     }
     std::sort(programs.begin(), programs.end());
@@ -155,20 +159,6 @@ double Database::calculateStringCompatibility(const std::wstring& compareName, c
 double Database::calculateWeight(double inputLen)
 {
     return 3 * std::log2(inputLen + 1);
-}
-
-double Database::calculateStairWeight(double inputLen)
-{
-    double weight = 1;
-    double len = 1;
-    double magnification = 3;
-
-    while (inputLen - len > 1e-5) {
-        inputLen -= len;
-        len += magnification;
-        weight += 1;
-    }
-    return weight;
 }
 
 double Database::calculateEditDistance(const std::wstring &compareName, const std::wstring &inputValue)
@@ -321,7 +311,8 @@ void Database::testCompareAlgorithm(std::wstring inputValue)
 
 void Database::addLaunchTime(int index)
 {
-    programs[index].launchTime ++;
+    ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
+    counter.openProgramName(programs[index].programPath);
 }
 
 void Database::clearProgramInfo()

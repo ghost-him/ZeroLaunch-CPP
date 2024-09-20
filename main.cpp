@@ -23,6 +23,13 @@ int main(int argc, char *argv[])
         QMessageBox::warning(nullptr, "提示", "当前程序已在运行");
         return 0;
     }
+
+    QObject::connect(&app, &SingleApplication::aboutToQuit, [](){
+        ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
+        counter.save();
+        qDebug() << "保存设置";
+    });
+
     app.setWindowIcon(QIcon(":/icon/trayIcon.svg"));
 
     Controller& controller = Controller::getInstance();

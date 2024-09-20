@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include "programlaunchcounter.h"
 
 struct ProgramNode {
     std::wstring showName;
@@ -77,9 +78,6 @@ private:
 
     double calculateWeight(double inputLen);
 
-    // 阶梯型权重，用于精准匹配(calculateKMP)算法中的权重计算
-    double calculateStairWeight(double inputLen);
-
     double calculateEditDistance(const std::wstring& compareName, const std::wstring& inputValue);
 
     double calculateCompatibility(const ProgramNode& node, const std::wstring& inputName);
@@ -96,6 +94,8 @@ private:
     std::wstring removeStringSpace(const std::wstring& str);
 
     std::wstring getUppercaseLetters(const std::wstring& str);
+
+
 };
 
 #endif // DATABASE_H

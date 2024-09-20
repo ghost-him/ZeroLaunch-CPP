@@ -151,6 +151,11 @@ void Controller::init()
 
     init.clearStore();
 
+    // 初始化计数器
+    ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
+    counter.init();
+    counter.enableStatistic(config.isEnableStatictics);
+
     for (const auto& i : config.keyFilters) {
         db.addKeyFilter(i.key.toStdWString(), i.stableBias);
     }

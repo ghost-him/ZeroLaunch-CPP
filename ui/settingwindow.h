@@ -44,8 +44,8 @@ public:
     void show();
 
     void clearIndexedAppTable();
-
-    void addIndexedAppItem(QString programName, bool isUWPApp, int stableBias, QString programPath);
+    // 向已索引的app展示表中添加一项
+    void addIndexedAppItem(QString programName, bool isUWPApp, int stableBias, int totalOpenCount, QString programPath);
 
     void adjustIndexedAppTable();
 
