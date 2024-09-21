@@ -16,7 +16,7 @@ struct SettingWindowConfigure {
         double stableBias;
         QString note;
     };
-
+    int configVersion; // 当前配置文件的版本
     bool isSearchStartMenu;
     bool isAutoStart;
     bool isPreLoadResource;
@@ -56,6 +56,8 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config);
 SettingWindowConfigure buildClassWithJson(const QJsonObject& json);
 
 QString getProgramVersion();
+
+int getConfigVersion();
 
 QString GetShellDirectory(int type);
 

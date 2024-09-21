@@ -191,6 +191,7 @@ void SettingWindow::on_btnConfirm_clicked()
 {
     SettingWindowConfigure configure;
 
+    configure.configVersion = getConfigVersion();
     configure.isAutoStart = ui->boxAutoStart->isChecked();
     configure.isSearchStartMenu = ui->boxSearchStartMenu->isChecked();
     configure.isSearchRegistry = ui->boxSearchRegistry->isChecked();

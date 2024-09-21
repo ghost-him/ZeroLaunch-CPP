@@ -144,6 +144,12 @@ void Controller::init()
 
     SettingWindowConfigure config = buildClassWithJson(configure);
 
+    // 验证当前的配置文件是否正确
+    if (config.configVersion != getConfigVersion()) {
+        QMessageBox::critical(nullptr, "错误", "当前配置文件的版本与程序所需版本不匹配。请打开程序目录，删除[Config.json]文件后重新运行本程序");
+        exit(1);
+    }
+
     uiController.initUI(config);
 
     ChineseConvertPinyin& pinyin = ChineseConvertPinyin::getInstance();

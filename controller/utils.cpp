@@ -30,7 +30,7 @@ QPixmap getFileIcon(const QString& filePath) {
 
 QJsonObject getDefaultConfigJson() {
     QJsonObject jsonObject;
-
+    jsonObject["configVersion"] = getConfigVersion();
     jsonObject["isAutoStart"] = false;
     jsonObject["searchStartMenu"] = true;
     jsonObject["searchRegistry"] = false;
@@ -89,7 +89,7 @@ void createFile(const QString &path, const QString &defaultContent) {
 
 QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     QJsonObject json;
-
+    json["configVersion"] = config.configVersion;
     json["isAutoStart"] = config.isAutoStart;
     json["searchStartMenu"] = config.isSearchStartMenu;
     json["searchRegistry"] = config.isSearchRegistry;
@@ -131,7 +131,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
 SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
 {
     SettingWindowConfigure ret;
-
+    ret.configVersion = json["configVersion"].toInt();
     ret.isAutoStart = json["isAutoStart"].toBool();
     ret.isSearchStartMenu = json["searchStartMenu"].toBool();
     ret.isSearchRegistry = json["searchRegistry"].toBool();
@@ -163,6 +163,11 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     }
 
     return ret;
+}
+
+int getConfigVersion()
+{
+    return 1;
 }
 
 QString getProgramVersion()
