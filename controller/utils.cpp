@@ -164,7 +164,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
 
 QString getProgramVersion()
 {
-    return "ZeroLaunch 0.8";
+    return "ZeroLaunch 0.8.1";
 }
 
 QString getPinyinConfigPath()

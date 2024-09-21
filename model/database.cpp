@@ -66,7 +66,7 @@ void Database::updateScores(const std::wstring& inputValue)
 {
     ProgramLaunchCounter& counter = ProgramLaunchCounter::getInstance();
     //qDebug() << "update score name: " << inputName;
-    std::wstring inputName = tolowerString(inputValue);
+    std::wstring inputName = removeRepeatedSpace(tolowerString(inputValue));
     for (auto& app : programs) {
         double compatibility = calculateCompatibility(app, inputName);
         compatibility += app.stableBias;
@@ -294,6 +294,28 @@ std::wstring Database::getUppercaseLetters(const std::wstring &str)
         }
     }
     return result;
+}
+
+std::wstring Database::removeRepeatedSpace(const std::wstring &str)
+{
+    std::wstring ret;
+    bool isSpace = false;
+    for (auto i : str) {
+        if (i != L' ') {
+            ret.push_back(i);
+            isSpace = false;
+        }
+        else {
+            if (!isSpace && !ret.empty()) {
+                ret.push_back(i);
+            }
+            isSpace = true;
+        }
+    }
+    if (!ret.empty() && ret.back() == L' ') {
+        ret.pop_back();
+    }
+    return ret;
 }
 
 

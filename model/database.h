@@ -95,6 +95,7 @@ private:
 
     std::wstring getUppercaseLetters(const std::wstring& str);
 
+    std::wstring removeRepeatedSpace(const std::wstring& str);
 
 };
 
