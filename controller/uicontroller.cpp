@@ -40,9 +40,6 @@ UIController::UIController() {
         searchBar.hide();
         resultFrame.hide();
     });
-
-    searchBar.show();
-    resultFrame.show();
 }
 
 void UIController::initUI(const SettingWindowConfigure &configure)

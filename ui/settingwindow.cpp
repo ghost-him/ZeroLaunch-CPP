@@ -91,6 +91,7 @@ void SettingWindow::initWindow(const SettingWindowConfigure &config)
     ui->boxSearchUWP->setChecked(config.isSearchUWP);
     ui->spReloadTime->setValue(config.autoReloadTime);
     ui->boxEnableStatistics->setChecked(config.isEnableStatictics);
+    ui->boxSlientBoot->setChecked(config.isSlientBoot);
 }
 
 void SettingWindow::show()
@@ -201,6 +202,7 @@ void SettingWindow::on_btnConfirm_clicked()
     configure.isSearchUWP = ui->boxSearchUWP->isChecked();
     configure.autoReloadTime = ui->spReloadTime->value();
     configure.isEnableStatictics = ui->boxEnableStatistics->isChecked();
+    configure.isSlientBoot = ui->boxSlientBoot->isChecked();
 
     for (int i = 0; i < ui->bannedList->count(); i ++) {
         QListWidgetItem* item = ui->bannedList->item(i);

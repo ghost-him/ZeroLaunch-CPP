@@ -184,6 +184,9 @@ void Controller::init()
     // x min = x * 60 * 1000 ms
     qDebug() << "start count time: " << config.autoReloadTime;
     autoReloadConfig->start(config.autoReloadTime * 1000 * 60);
+    if (!config.isSlientBoot) {
+        uiController.showSearchBar();
+    }
 }
 
 void Controller::launchSelectedProgram()

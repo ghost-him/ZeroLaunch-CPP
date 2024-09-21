@@ -35,6 +35,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="boxSlientBoot">
+         <property name="text">
+          <string>程序静默启动（启动后不自动弹出搜索栏）</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="boxPreLoadResource">
          <property name="text">
           <string>设置启动预加载资源（程序启动会慢一些）</string>

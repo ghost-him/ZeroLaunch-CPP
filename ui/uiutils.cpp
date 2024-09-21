@@ -89,7 +89,6 @@ bool Color::isDarkMode()
         // 读取 AppsUseLightTheme 值
         if (RegQueryValueEx(hKey, TEXT("AppsUseLightTheme"), NULL, &type, reinterpret_cast<LPBYTE>(&value), &size) == ERROR_SUCCESS)
         {
-            RegCloseKey(hKey);
             ret = static_cast<bool>(value == 0);
         }
         RegCloseKey(hKey);

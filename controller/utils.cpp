@@ -42,6 +42,7 @@ QJsonObject getDefaultConfigJson() {
     jsonObject["searchBarPlaceholderText"] = "Hello, ZeroLaunch!";
     jsonObject["resultFrameEmptyText"] = "当前搜索无结果";
     jsonObject["searchUWP"] = true;
+    jsonObject["isSlientBoot"] = false;
 
     QJsonArray searchItems;
     QJsonArray bannedItems;
@@ -100,6 +101,7 @@ QJsonObject buildJsonWithClass(const SettingWindowConfigure& config) {
     json["searchUWP"] = config.isSearchUWP;
     json["autoReloadTime"] = config.autoReloadTime;
     json["isEnableStatictics"] = config.isEnableStatictics;
+    json["isSlientBoot"] = config.isSlientBoot;
 
     QJsonArray bannedItems;
     for (const auto& i : config.bannedPaths) {
@@ -141,6 +143,7 @@ SettingWindowConfigure buildClassWithJson(const QJsonObject &json)
     ret.isSearchUWP = json["searchUWP"].toBool();
     ret.autoReloadTime = json["autoReloadTime"].toInt();
     ret.isEnableStatictics = json["isEnableStatictics"].toBool();
+    ret.isSlientBoot = json["isSlientBoot"].toBool();
 
     QJsonArray bannedItems = json["bannedPaths"].toArray();
     for (const auto& i : bannedItems) {
