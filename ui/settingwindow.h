@@ -96,6 +96,8 @@ private slots:
 
     void on_btnIgnoreHelpApp_clicked();
 
+    void on_btnOpenGithub_clicked();
+
 private:
     explicit SettingWindow(QWidget *parent = nullptr);
     ~SettingWindow();

@@ -352,3 +352,10 @@ void SettingWindow::on_btnIgnoreHelpApp_clicked()
     addkeyFilterItem("help", -5000, "忽略帮助文件");
 }
 
+
+void SettingWindow::on_btnOpenGithub_clicked()
+{
+    // 点击跳转到这个软件的更新网站
+    QDesktopServices::openUrl(QUrl("https://github.com/ghost-him/ZeroLaunch-CPP/releases"));
+}
+

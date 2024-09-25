@@ -172,7 +172,7 @@ int getConfigVersion()
 
 QString getProgramVersion()
 {
-    return "ZeroLaunch 0.8.1";
+    return "ZeroLaunch 0.8.2";
 }
 
 QString getPinyinConfigPath()
