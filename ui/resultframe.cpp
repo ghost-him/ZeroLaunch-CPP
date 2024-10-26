@@ -182,11 +182,7 @@ void ResultFrame::adjustSizeToFitItems()
     setFixedHeight(totalHeight);
 }
 
-
-
-
 void ResultFrame::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     emit sg_launchSelectedProgram();
 }
-

@@ -19,14 +19,41 @@ UIController::UIController() {
     });
 
     // 初始化键盘钩子
-    hotkey = std::make_shared<QHotkey>(QKeySequence("Alt+Space"), true, nullptr);
+    // mixHotkey = std::make_shared<QHotkey>(QKeySequence("Alt+Space"), true, nullptr);
 
-    QObject::connect(hotkey.get(), &QHotkey::activated, [&](){
-        SearchBar& searchBar = SearchBar::getInstance();
-        ResultFrame& resultFrame = ResultFrame::getInstance();
+    // QObject::connect(mixHotkey.get(), &QHotkey::activated, [&](){
+    //     SearchBar& searchBar = SearchBar::getInstance();
+    //     ResultFrame& resultFrame = ResultFrame::getInstance();
 
-        searchBar.show();
-        resultFrame.show();
+    //     searchBar.show();
+    //     resultFrame.show();
+    // });
+
+    altHotkey = std::make_shared<QHotkey>(QKeySequence("Alt"), true, nullptr);
+    spaceHotkey = std::make_shared<QHotkey>(QKeySequence("Space"), true, nullptr);
+
+    // 初始化键盘钩子
+
+    QObject::connect(altHotkey.get(), &QHotkey::activated, [&](){
+        altPressed = true;
+        qDebug() << "按下alt";
+        checkHotkey();
+    });
+
+    QObject::connect(altHotkey.get(), &QHotkey::released, [&](){
+        qDebug() << "放开alt";
+        altPressed = false;
+    });
+
+    QObject::connect(spaceHotkey.get(), &QHotkey::activated, [&](){
+        spacePressed = true;
+        qDebug() << "按下space";
+        checkHotkey();
+    });
+
+    QObject::connect(spaceHotkey.get(), &QHotkey::released, [&](){
+        qDebug() << "放开space";
+        spacePressed = false;
     });
 
     // 初始化窗口监视器
@@ -149,6 +176,17 @@ const QPixmap &UIController::getIcon(const std::wstring &iconPath, bool isUWPApp
         return getIconWithABPath(iconPath);
     else
         return getIconWithEXE(iconPath);
+}
+
+void UIController::checkHotkey()
+{
+    if (altPressed && spacePressed) {
+        SearchBar& searchBar = SearchBar::getInstance();
+        ResultFrame& resultFrame = ResultFrame::getInstance();
+
+        searchBar.show();
+        resultFrame.show();
+    }
 }
 
 QPixmap UIController::addMarginToPixmap(const QPixmap &originalPixmap, int margin)

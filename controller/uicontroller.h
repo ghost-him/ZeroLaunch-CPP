@@ -34,7 +34,14 @@ public:
 
     ~UIController() = default;
 private:
-    std::shared_ptr<QHotkey> hotkey;
+    std::shared_ptr<QHotkey> mixHotkey;
+    std::shared_ptr<QHotkey> altHotkey, spaceHotkey;
+    bool altPressed = false;
+    bool spacePressed = false;
+
+    void checkHotkey();
+
+
     QPixmap addMarginToPixmap(const QPixmap &originalPixmap, int margin);
 
 
