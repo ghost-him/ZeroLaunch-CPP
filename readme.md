@@ -1,6 +1,6 @@
 # ZeroLaunch-CPP
 
-> 该项目已进入维护阶段，只做基本的bug修复，不会再更新新的内容。软件很快会使用 rust 与 tauri 进行重构，敬请期待。
+> 该项目已进入维护阶段，只做基本的bug修复，不会再更新新的内容。目前已使用 Rust+Tauri 重构，地址如下：[ZeroLaunch-rs](https://github.com/ghost-him/ZeroLaunch-rs)。
 
 [国内项目地址](https://gitee.com/ghost-him/ZeroLaunch-CPP)，[国外项目地址](https://github.com/ghost-him/ZeroLaunch-CPP)
 
